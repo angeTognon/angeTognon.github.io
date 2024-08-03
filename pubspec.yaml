@@ -39,6 +39,25 @@ dependencies:
   file_picker:
   multi_circular_slider: ^1.1.0
   pie_chart: ^5.4.0
+  provider:
+  shared_preferences:
+  d_chart: ^2.8.0
+  pdf: ^3.8.4
+  open_filex: 
+  path_provider: ^2.0.11
+  path:
+  printing:
+  universal_html: ^2.0.8
+  lottie:
+  flutter_screen_lock: ^9.1.0
+  image_picker:
+  camera:
+  flutter_camera: ^1.0.0
+  geolocator:
+  geocoding:
+  typewritertext: ^3.0.8
+  http:
+  flutter_phoenix:
 
 dev_dependencies:
   flutter_test:

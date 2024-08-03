@@ -14,6 +14,9 @@ w(double w) {
 }
 Color txtDesc = const Color.fromARGB(166, 0, 0, 0);
 Color mainColor = Color.fromARGB(255, 7, 65, 173);
+Color mainColor__ = Color.fromARGB(16, 7, 65, 173);
+Color amainColor__ = Color.fromARGB(16, 7, 65, 173);
+Color mainColor2__ = Color.fromARGB(255, 7, 65, 173);
 // Color mainColor = Color.fromARGB(255, 0, 136, 20);
 Color mainColor2 = Color.fromARGB(216, 42, 116, 100);//Color.fromARGB(73, 42, 116, 100)
 Color mainColor3 = Color.fromARGB(73, 42, 116, 100);//

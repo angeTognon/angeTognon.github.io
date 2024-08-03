@@ -1,24 +1,43 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:d_chart/d_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:zth_app/widgets/wid_var.dart';
 
-class Settings extends StatefulWidget {
-  const Settings({super.key});
+class GestionPleinBlame extends StatefulWidget {
+  const GestionPleinBlame({super.key});
 
   @override
-  State<Settings> createState() => _SettingsState();
+  State<GestionPleinBlame> createState() => _GestionPleinBlameState();
 }
 
-class _SettingsState extends State<Settings> {
+class _GestionPleinBlameState extends State<GestionPleinBlame> {
   final GlobalKey _containerKey = GlobalKey();
   final GlobalKey _containerKey2 = GlobalKey();
   TextEditingController montantController = TextEditingController();
   TextEditingController montantAvanceController = TextEditingController();
   int count = 0;
+  final ordinalGroup = [
+    OrdinalGroup(
+      color: Color.fromARGB(142, 255, 17, 0),
+      id: '1',
+      data: [
+        OrdinalData(
+          domain: 'Janvier',
+          measure: 3,
+        ),
+        OrdinalData(domain: 'Février', measure: 10),
+        OrdinalData(domain: 'Mars', measure: 3),
+        OrdinalData(domain: 'Avril', measure: 8),
+        OrdinalData(domain: 'Mai', measure: 4.5),
+        OrdinalData(domain: 'Juin', measure: 6.5),
+        OrdinalData(domain: 'Juillet', measure: 6.5),
+      ],
+    ),
+  ];
 
   DateTime _selectedDate = DateTime.now();
   void _showDatePicker() {
@@ -62,15 +81,17 @@ class _SettingsState extends State<Settings> {
     super.initState();
   }
 
+  var data = [
+    {'category': 'Shirts', 'sales': 5},
+    {'category': 'Cardigans', 'sales': 20},
+    {'category': 'Chiffons', 'sales': 36},
+    {'category': 'Pants', 'sales': 10},
+    {'category': 'Heels', 'sales': 10},
+    {'category': 'Socks', 'sales': 20},
+  ];
+
   void calculPrime1() {}
   String _selectedValue = 'Cliquez ici pour choisir';
-  /* · l' ;
-· l'avertissement écrit ;
-· le blâme ;
-· la mise à pied de 1 à 8 jours avec privation de salaire ;
-· le licenciement avec préavis ;
-· le licenciement sans préavis en cas de faute lourde sous réserve de l'appréciation de la juridiction compétente en ce qui concerne la
-gravité de la faute. */
   final List<String> _options = [
     'Cliquez ici pour choisir',
     'Avertissement Verbal',
@@ -80,125 +101,336 @@ gravité de la faute. */
     'licenciement sans préavis'
   ];
 
+  final TextEditingController _searchController = TextEditingController();
+  final TextEditingController tache1 = TextEditingController();
+  bool _isSearching = false;
+  void performSearch(String query) {
+    // Ici, vous pouvez implémenter la logique de recherche en fonction de votre application
+    print("Recherche pour : $query");
+  }
+
+  final GlobalKey _containerKey3 = GlobalKey();
+  final GlobalKey _containerKey4 = GlobalKey();
+  final GlobalKey _containerKey_add_statut = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return Container(
         padding: EdgeInsets.all(30),
         height: MediaQuery.of(context).size.height,
         width: (MediaQuery.of(context).size.width * 13.5) / 16,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Paramètre",
-              style:
-                  TextStyle(fontFamily: 'bold', fontSize: 23, color: mainColor),
-            ),
-            h(20),
-            Container(
-              width: MediaQuery.of(context).size.width / 2,
-              child: Text(
-                "Gérez vos paramètres et préférences",
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Santions ",
                 style: TextStyle(
-                    fontFamily: 'normal',
-                    fontSize: 15,
-                    color: Color.fromARGB(255, 0, 0, 0)),
+                    fontFamily: 'bold', fontSize: 23, color: mainColor),
               ),
-            ),
-            h(20),
-            Divider(),
-            h(20),
-            Container(
-              width: MediaQuery.of(context).size.width / 2,
-              child: Text(
-                "Mon Profil",
-                style: TextStyle(
-                    fontFamily: 'bold', fontSize: 15, color: mainColor),
+              h(50),
+              Container(
+                width: MediaQuery.of(context).size.width / 2,
+                child: Text(
+                  "Gérez plus facilement les sanctions de vos clients",
+                  style: TextStyle(
+                      fontFamily: 'normal',
+                      fontSize: 16,
+                      color: Color.fromARGB(255, 0, 0, 0)),
+                ),
               ),
-            ),
-            h(20),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Row(
+              h(20),
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(left: 30, bottom: 13),
+                    decoration: BoxDecoration(
+                        color: Color.fromARGB(73, 42, 116, 100),
+                        borderRadius: BorderRadius.circular(15)),
+                    height: 35,
+                    width: 300,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _searchController,
+                            onChanged: (value) {
+                              setState(() {
+                                _isSearching = value.isNotEmpty;
+                              });
+                            },
+                            style: TextStyle(
+                                fontFamily: 'normal',
+                                fontSize: 14,
+                                color: Colors.black54),
+                            decoration: InputDecoration(
+                              hintText: "Trier par personne",
+                              hintStyle:
+                                  TextStyle(fontFamily: 'normal', fontSize: 14),
+                              border: InputBorder.none,
+                              suffixIcon: _isSearching
+                                  ? IconButton(
+                                      icon: Icon(
+                                        Icons.clear,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () {
+                                        _searchController.clear();
+                                        setState(() {
+                                          _isSearching = false;
+                                        });
+                                      },
+                                    )
+                                  : null,
+                            ),
+                          ),
+                        ),
+                        if (_isSearching)
+                          IconButton(
+                            icon: Icon(Icons.search, color: Colors.white),
+                            onPressed: () {
+                              // Exécuter la recherche avec la valeur du champ de texte
+                              String searchQuery = _searchController.text;
+                              performSearch(searchQuery);
+                            },
+                          ),
+                      ],
+                    ),
+                  ),
+                  w(30),
+                InkWell(
+                  onTap: () {
+                    final RenderBox container = _containerKey3.currentContext
+                        ?.findRenderObject() as RenderBox;
+                    final Offset containerPosition =
+                        container.localToGlobal(Offset.zero);
+                    final Size containerSize = container.size;
+                    showMenu(
+                      surfaceTintColor: Colors.white,
+                      context: context,
+                      position: RelativeRect.fromLTRB(
+                        containerPosition.dx,
+                        containerPosition.dy + containerSize.height,
+                        MediaQuery.of(context).size.width -
+                            containerPosition.dx -
+                            containerSize.width,
+                        0,
+                      ),
+                      items: [
+                        /*     '',
+    '',
+    '',
+    '',
+    '' */
+                        PopupMenuItem(
+                          child: Text(
+                            "Avertissement Verbal",
+                            style:
+                                TextStyle(fontFamily: 'normal', fontSize: 13),
+                          ),
+                          value: 2,
+                        ),
+                        PopupMenuItem(
+                          child: Text(
+                            'Blâme',
+                            style:
+                                TextStyle(fontFamily: 'normal', fontSize: 13),
+                          ),
+                          value: 2,
+                        ),
+                        PopupMenuItem(
+                          child: Text(
+                            'La mise à pied de 1 à 8 jours avec privation de salaire',
+                            style:
+                                TextStyle(fontFamily: 'normal', fontSize: 13),
+                          ),
+                          value: 2,
+                        ),
+                        PopupMenuItem(
+                          child: Text(
+                            'licenciement avec préavis',
+                            style:
+                                TextStyle(fontFamily: 'normal', fontSize: 13),
+                          ),
+                          value: 2,
+                        ),
+                        PopupMenuItem(
+                          child: Text(
+                            'licenciement sans préavis',
+                            style:
+                                TextStyle(fontFamily: 'normal', fontSize: 13),
+                          ),
+                          value: 2,
+                        ),
+                      ],
+
+                      elevation: 8.0, // Adjust the elevation for the box shadow
+                    );
+                  },
+                  child: Container(
+                    padding:
+                        EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
+                    width: 220,
+                    height: 35,
+                    key: _containerKey3,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Colors.black26)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Trier par type de Sanction",
+                          style: TextStyle(
+                              fontFamily: 'normal',
+                              fontSize: 13,
+                              color: const Color.fromARGB(154, 0, 0, 0)),
+                        ),
+                        Icon(
+                          Icons.arrow_drop_down_rounded,
+                          color: const Color.fromARGB(154, 0, 0, 0),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                ],
+              ),
+              h(20),
+              Container(
+                height: 50,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                    color: mainColor3, borderRadius: BorderRadius.circular(10)),
+                child: Row(
                   children: [
                     Container(
-                      height: 200,
-                      width: 200,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(300),
-                          image: DecorationImage(
-                              image: AssetImage("assets/images/ange.jpg"),
-                              fit: BoxFit.cover)),
+                      width: 300,
+                      height: 50,
+                      child: Center(
+                        child: Text(
+                          "Nom et Prénoms de l'employé",
+                          style: TextStyle(fontFamily: 'bold', fontSize: 13),
+                        ),
+                      ),
                     ),
-                    w(30),
-                     Column(crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "TOGNON KOFFI ANGE",
-                          style: TextStyle(fontFamily: 'bold', fontSize: 15, ),
+                    Container(
+                      height: 50,
+                      width: 3,
+                      color: Colors.white54,
+                    ),
+                    Container(
+                      width: 120,
+                      height: 50,
+                      child: Center(
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          "Nombre de Sanctions reçues",
+                          style: TextStyle(fontFamily: 'bold', fontSize: 13),
                         ),
-                        h(20),
-                        Text(
-                          "Administrateur",
-                          style: TextStyle(fontFamily: 'normal', fontSize: 14,color: mainColor ),
+                      ),
+                    ),
+                    Container(
+                      height: 50,
+                      width: 3,
+                      color: Colors.white54,
+                    ),
+                    Container(
+                      width: 200,
+                      height: 50,
+                      child: Center(
+                        child: Text(
+                          "Type de Sanction",
+                          style: TextStyle(fontFamily: 'bold', fontSize: 13),
                         ),
-                       
-                      ],
-                    )
+                      ),
+                    ),
+                    Container(
+                      height: 50,
+                      width: 3,
+                      color: Colors.white54,
+                    ),
+                    Container(
+                      width: 150,
+                      height: 50,
+                      child: Center(
+                        child: Text(
+                          "Date de Sanction",
+                          style: TextStyle(fontFamily: 'bold', fontSize: 13),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 50,
+                      width: 3,
+                      color: Colors.white54,
+                    ),
+                    Container(
+                      width: 250,
+                      height: 50,
+                      child: Center(
+                        child: Text(
+                          "Motif de Sanction",
+                          style: TextStyle(fontFamily: 'bold', fontSize: 13),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 50,
+                      width: 3,
+                      color: Colors.white54,
+                    ),
+                    Expanded(
+                      child: Container(
+                        width: 200,
+                        height: 50,
+                        child: Center(
+                          child: Text(
+                            "Action",
+                            style:
+                                TextStyle(fontFamily: 'normal', fontSize: 13),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-                w(20),
-                Container(
-                  height: 200,width: 4,color: Colors.black26,
+              ),
+              h(5),
+              BoxUser("Aïcha TRAORÉ", 5, "Sanction 1", "10/07/2024", "Retard",
+                  _containerKey),
+              Divider(),
+              h(5),
+              BoxUser("Christian ZOGBO", 0, "-", "-", "-", _containerKey2),
+              Divider(),
+              h(20),
+              Text(
+                "Détails des sanctions de l'année ",
+                style: TextStyle(
+                    fontFamily: 'bold', fontSize: 20, color: mainColor),
+              ),
+              h(20),
+              Container(
+                height: 500,
+                width: 500,
+                child: Column(
+                  children: [
+                    AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: DChartBarO(
+                        areaColor: (group, ordinalData, index) {
+                          if (ordinalData == 10) {
+                            mainColor;
+                          }
+                        },
+                        groupList: ordinalGroup,
+                      ),
+                    ),
+                  ],
                 ),
-                w(20),
-                Column(crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text("Nationalité :",style: TextStyle(fontFamily: 'bold', fontSize: 14,color: mainColor ),),
-                            w(20),
-                            Text("Béninoise",style: TextStyle(fontFamily: 'normal', fontSize: 14, ),),
-                          ],
-                        ),   
-                        h(20),
-                        Row(
-                          children: [
-                            Text("Ville :",style: TextStyle(fontFamily: 'bold', fontSize: 14,color: mainColor ),),
-                            w(20),
-                            Text("Parakou",style: TextStyle(fontFamily: 'normal', fontSize: 14, ),),
-                          ],
-                        ),
-                        h(20),
-                        Row(
-                          children: [
-                            Text("Quartier :",style: TextStyle(fontFamily: 'bold', fontSize: 14,color: mainColor ),),
-                            w(20),
-                            Text("Zongo",style: TextStyle(fontFamily: 'normal', fontSize: 14, ),),
-                          ],
-                        ),  
-                        h(20),
-                        Row(
-                          children: [
-                            Text("Groupe Sanguin :",style: TextStyle(fontFamily: 'bold', fontSize: 14,color: mainColor ),),
-                            w(20),
-                            Text("B",style: TextStyle(fontFamily: 'normal', fontSize: 14, ),),
-                          ],
-                        ),    
-                        h(20),
-                        Row(
-                          children: [
-                            Text("Email :",style: TextStyle(fontFamily: 'bold', fontSize: 14,color: mainColor ),),
-                            w(20),
-                            Text("ange@gmail.com",style: TextStyle(fontFamily: 'normal', fontSize: 14, ),),
-                          ],
-                        ),                      
-                      ],
-                    )
-              ],
-            ),
-           
-          ],
+              )
+            ],
+          ),
         ));
   }
 
@@ -336,6 +568,14 @@ gravité de la faute. */
                             ),
                             items: [
                               PopupMenuItem(
+                                onTap: () {},
+                                child: Text(
+                                  "Enregister la sanction",
+                                  style: TextStyle(fontFamily: 'normal'),
+                                ),
+                                value: 2,
+                              ),
+                              PopupMenuItem(
                                 onTap: () {
                                   pleinteMethode(
                                     nomprenom,
@@ -343,6 +583,14 @@ gravité de la faute. */
                                 },
                                 child: Text(
                                   "Ajouter une sanction à l'employé",
+                                  style: TextStyle(fontFamily: 'normal'),
+                                ),
+                                value: 2,
+                              ),
+                              PopupMenuItem(
+                                onTap: () {},
+                                child: Text(
+                                  "Télécharger la fiche de sanction de l'employé",
                                   style: TextStyle(fontFamily: 'normal'),
                                 ),
                                 value: 2,

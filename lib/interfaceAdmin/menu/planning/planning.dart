@@ -2,11 +2,11 @@ import 'dart:io' as io;
 import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:zth_app/menu/planning/creat_group_salary.dart';
-import 'package:zth_app/menu/salaire/gestion_plein_blame.dart';
-import 'package:zth_app/menu/salaire/gestion_pret_avancement.dart';
-import 'package:zth_app/menu/salaire/gestion_prime.dart';
-import 'package:zth_app/menu/planning/planning_employ%C3%A9.dart';
+import 'package:zth_app/interfaceAdmin/menu/planning/creat_group_salary.dart';
+import 'package:zth_app/interfaceAdmin/menu/sanctions/sanction.dart';
+import 'package:zth_app/interfaceAdmin/menu/salaire/gestion_pret_avancement.dart';
+import 'package:zth_app/interfaceAdmin/menu/salaire/gestion_prime.dart';
+import 'package:zth_app/interfaceAdmin/menu/planning/planning_employ%C3%A9.dart';
 import 'package:zth_app/widgets/wid_var.dart';
 import 'dart:html' as html;
 

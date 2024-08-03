@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:zth_app/menu/accueil.dart';
-import 'package:zth_app/menu/planning/planning.dart';
-import 'package:zth_app/menu/pr%C3%A9sence/presence.dart';
-import 'package:zth_app/menu/rh.dart';
-import 'package:zth_app/menu/salaire/gestion_plein_blame.dart';
-import 'package:zth_app/menu/salaire/salaire.dart';
-import 'package:zth_app/menu/salaire/settings.dart';
+import 'package:zth_app/interfaceAdmin/menu/accueil.dart';
+import 'package:zth_app/interfaceAdmin/menu/message/chat.dart';
+import 'package:zth_app/interfaceAdmin/menu/planning/planning.dart';
+import 'package:zth_app/interfaceAdmin/menu/pr%C3%A9sence/presence.dart';
+import 'package:zth_app/interfaceAdmin/menu/rh.dart';
+import 'package:zth_app/interfaceAdmin/menu/sanctions/sanction.dart';
+import 'package:zth_app/interfaceAdmin/menu/salaire/salaire.dart';
+import 'package:zth_app/interfaceAdmin/menu/salaire/settings.dart';
 import 'package:zth_app/widgets/wid_var.dart';
 
 class Home extends StatefulWidget {
@@ -17,12 +18,11 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-              
   /* , */
   bool accueil = true;
   bool planning = false;
-  bool salaire = false; 
-  bool sanction = false; 
+  bool salaire = false;
+  bool sanction = false;
   bool presence = false;
   bool rh = false;
   bool actualite = false;
@@ -31,6 +31,43 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       //appBar: MAB(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButton: actualite
+          ? Container(
+              margin: EdgeInsets.only(left: 600),
+              child: Card(
+                elevation: 10,
+                child: Container(
+                  padding: EdgeInsets.only(left: 10,right: 10),
+                  color: const Color.fromARGB(255, 255, 255, 255),
+                  height: 60,
+                  width: (MediaQuery.of(context).size.width * 9.8) / 16,
+                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(left: 20,top: 0),
+                        decoration: BoxDecoration(
+                          color: mainColor__,
+                          borderRadius: BorderRadius.circular(20)
+                        ),
+                        height: 40,
+                        width: (MediaQuery.of(context).size.width * 9) / 16,
+                        child: TextFormField(
+                          decoration: InputDecoration(labelStyle: TextStyle(fontFamily: 'normal',fontSize: 13),label: Text("Ecrivez un message ici"),border: InputBorder.none),
+                        ),
+                      ),
+                      CircleAvatar(
+                        backgroundColor: mainColor,
+                        child: Center(
+                          child: Icon(Icons.send,color: Colors.white,),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            )
+          : null,
       body: Container(
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(color: Colors.white),
@@ -38,14 +75,23 @@ class _HomeState extends State<Home> {
         child: Row(
           children: [
             MenuPrincipal(),
-            accueil? Accueil() : 
-            planning? Planning():
-            salaire? Salaire() : 
-            sanction? GestionPleinBlame():
-            rh? RH() :
-            presence? Presence() :
-            parametre? Settings() :
-                    Container(),
+            accueil
+                ? Accueil()
+                : planning
+                    ? Planning()
+                    : salaire
+                        ? Salaire()
+                        : sanction
+                            ? GestionPleinBlame()
+                            : presence
+                                ? Presence()
+                                : rh
+                                    ? RH()
+                                    : actualite
+                                        ? ChatScreen()
+                                        : parametre
+                                            ? Settings()
+                                            : Container(),
           ],
         ),
       ),
@@ -56,7 +102,7 @@ class _HomeState extends State<Home> {
     return Container(
       padding: EdgeInsets.all(10),
       height: MediaQuery.of(context).size.height,
-      width: (MediaQuery.of(context).size.width * 2.5)/ 16,
+      width: (MediaQuery.of(context).size.width * 2.5) / 16,
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
         BoxShadow(
           color: Colors.grey.withOpacity(0.5),
@@ -69,19 +115,31 @@ class _HomeState extends State<Home> {
         children: [
           h(15),
           Container(
-            width: (MediaQuery.of(context).size.width * 2.5)/ 16,
+            width: (MediaQuery.of(context).size.width * 2.5) / 16,
             child: Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: mainColor5,minRadius: 20,
-                ),w(20),
-                Column(crossAxisAlignment: CrossAxisAlignment.start,
-                  
+                  backgroundColor: mainColor5,
+                  minRadius: 20,
+                ),
+                w(20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                  Text("PharmaRH",style: TextStyle(color: Colors.black,fontFamily: 'bold'),),
-                  h(4),
-                  Text("Administrateur",style: TextStyle(color: const Color.fromARGB(166, 0, 0, 0),fontFamily: 'normal',fontSize: 13),),
-                ],)
+                    Text(
+                      "PharmaRH",
+                      style: TextStyle(color: Colors.black, fontFamily: 'bold'),
+                    ),
+                    h(4),
+                    Text(
+                      "Administrateur",
+                      style: TextStyle(
+                          color: const Color.fromARGB(166, 0, 0, 0),
+                          fontFamily: 'normal',
+                          fontSize: 13),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
@@ -90,20 +148,32 @@ class _HomeState extends State<Home> {
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: accueil? Color.fromARGB(17, 0, 0, 0) : Colors.white
-            ),
+                borderRadius: BorderRadius.circular(10),
+                color: accueil ? Color.fromARGB(17, 0, 0, 0) : Colors.white),
             child: InkWell(
-              onTap: () => setState(() {accueil=true;planning=false ; salaire=false; sanction=false;presence=false; rh=false;actualite=false;parametre=false;}),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              onTap: () => setState(() {
+                accueil = true;
+                planning = false;
+                salaire = false;
+                sanction = false;
+                presence = false;
+                rh = false;
+                actualite = false;
+                parametre = false;
+              }),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
                       Container(
                           height: 30,
                           width: 30,
-                          child: Icon(Icons.dashboard,color: mainColor5,)),
-                          w(10),
+                          child: Icon(
+                            Icons.dashboard,
+                            color: mainColor5,
+                          )),
+                      w(10),
                       Text(
                         "Tableau de Bord",
                         style: TextStyle(
@@ -114,7 +184,10 @@ class _HomeState extends State<Home> {
                       ),
                     ],
                   ),
-                  Icon(Icons.arrow_forward_ios,color: mainColor5,)
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: mainColor5,
+                  )
                 ],
               ),
             ),
@@ -125,21 +198,34 @@ class _HomeState extends State<Home> {
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: planning? Color.fromARGB(17, 0, 0, 0) : Colors.white
-              //color: Color.fromARGB(17, 0, 0, 0)
-            ),
+                borderRadius: BorderRadius.circular(10),
+                color: planning ? Color.fromARGB(17, 0, 0, 0) : Colors.white
+                //color: Color.fromARGB(17, 0, 0, 0)
+                ),
             child: InkWell(
-              onTap: () => setState(() {accueil=false;planning=true ; salaire=false; sanction=false;presence=false; rh=false;actualite=false;parametre=false;}),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              onTap: () => setState(() {
+                accueil = false;
+                planning = true;
+                salaire = false;
+                sanction = false;
+                presence = false;
+                rh = false;
+                actualite = false;
+                parametre = false;
+              }),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
                       Container(
                           height: 30,
                           width: 30,
-                          child: Icon(Icons.edit_calendar,color: mainColor5,)),
-                          w(10),
+                          child: Icon(
+                            Icons.edit_calendar,
+                            color: mainColor5,
+                          )),
+                      w(10),
                       Text(
                         "Planning",
                         style: TextStyle(
@@ -160,21 +246,34 @@ class _HomeState extends State<Home> {
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: salaire? Color.fromARGB(17, 0, 0, 0) : Colors.white
-              //color: Color.fromARGB(17, 0, 0, 0)
-            ),
+                borderRadius: BorderRadius.circular(10),
+                color: salaire ? Color.fromARGB(17, 0, 0, 0) : Colors.white
+                //color: Color.fromARGB(17, 0, 0, 0)
+                ),
             child: InkWell(
-              onTap: () => setState(() {accueil=false;planning=false ; salaire=true; sanction=false;presence=false; rh=false;actualite=false;parametre=false;}),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              onTap: () => setState(() {
+                accueil = false;
+                planning = false;
+                salaire = true;
+                sanction = false;
+                presence = false;
+                rh = false;
+                actualite = false;
+                parametre = false;
+              }),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
                       Container(
                           height: 35,
                           width: 35,
-                          child: Icon(Icons.account_balance_wallet,color: mainColor5,)),
-                          w(10),
+                          child: Icon(
+                            Icons.account_balance_wallet,
+                            color: mainColor5,
+                          )),
+                      w(10),
                       Text(
                         "Salaire",
                         style: TextStyle(
@@ -195,21 +294,34 @@ class _HomeState extends State<Home> {
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: sanction? Color.fromARGB(17, 0, 0, 0) : Colors.white
-              //color: Color.fromARGB(17, 0, 0, 0)
-            ),
+                borderRadius: BorderRadius.circular(10),
+                color: sanction ? Color.fromARGB(17, 0, 0, 0) : Colors.white
+                //color: Color.fromARGB(17, 0, 0, 0)
+                ),
             child: InkWell(
-              onTap: () => setState(() {accueil=false;planning=false ; salaire=false; sanction=true;presence=false; rh=false;actualite=false;parametre=false;}),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              onTap: () => setState(() {
+                accueil = false;
+                planning = false;
+                salaire = false;
+                sanction = true;
+                presence = false;
+                rh = false;
+                actualite = false;
+                parametre = false;
+              }),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
                       Container(
                           height: 35,
                           width: 35,
-                          child: Icon(Icons.add_chart_rounded,color: mainColor5,)),
-                          w(10),
+                          child: Icon(
+                            Icons.add_chart_rounded,
+                            color: mainColor5,
+                          )),
+                      w(10),
                       Text(
                         "Sanctions",
                         style: TextStyle(
@@ -230,21 +342,34 @@ class _HomeState extends State<Home> {
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: presence? Color.fromARGB(17, 0, 0, 0) : Colors.white
-              //color: Color.fromARGB(17, 0, 0, 0)
-            ),
+                borderRadius: BorderRadius.circular(10),
+                color: presence ? Color.fromARGB(17, 0, 0, 0) : Colors.white
+                //color: Color.fromARGB(17, 0, 0, 0)
+                ),
             child: InkWell(
-              onTap: () => setState(() {accueil=false;planning=false ; salaire=false; sanction=false;presence=true; rh=false;actualite=false;parametre=false;}),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              onTap: () => setState(() {
+                accueil = false;
+                planning = false;
+                salaire = false;
+                sanction = false;
+                presence = true;
+                rh = false;
+                actualite = false;
+                parametre = false;
+              }),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
                       Container(
                           height: 35,
                           width: 35,
-                          child: Icon(Icons.timelapse_sharp,color: mainColor5,)),
-                          w(10),
+                          child: Icon(
+                            Icons.timelapse_sharp,
+                            color: mainColor5,
+                          )),
+                      w(10),
                       Text(
                         "Présences",
                         style: TextStyle(
@@ -265,21 +390,34 @@ class _HomeState extends State<Home> {
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: rh? Color.fromARGB(17, 0, 0, 0) : Colors.white
-              //color: Color.fromARGB(17, 0, 0, 0)
-            ),
+                borderRadius: BorderRadius.circular(10),
+                color: rh ? Color.fromARGB(17, 0, 0, 0) : Colors.white
+                //color: Color.fromARGB(17, 0, 0, 0)
+                ),
             child: InkWell(
-              onTap: () => setState(() {accueil=false;planning=false ; salaire=false; sanction=false;presence=false; rh=true;actualite=false;parametre=false;}),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              onTap: () => setState(() {
+                accueil = false;
+                planning = false;
+                salaire = false;
+                sanction = false;
+                presence = false;
+                rh = true;
+                actualite = false;
+                parametre = false;
+              }),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
                       Container(
                           height: 35,
                           width: 35,
-                          child: Icon(Icons.person,color: mainColor5,)),
-                          w(10),
+                          child: Icon(
+                            Icons.person,
+                            color: mainColor5,
+                          )),
+                      w(10),
                       Text(
                         "RH",
                         style: TextStyle(
@@ -294,30 +432,42 @@ class _HomeState extends State<Home> {
               ),
             ),
           ),
-          
           h(10),
           Divider(),
           h(5),
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: actualite? Color.fromARGB(17, 0, 0, 0) : Colors.white
-              //color: Color.fromARGB(17, 0, 0, 0)
-            ),
+                borderRadius: BorderRadius.circular(10),
+                color: actualite ? Color.fromARGB(17, 0, 0, 0) : Colors.white
+                //color: Color.fromARGB(17, 0, 0, 0)
+                ),
             child: InkWell(
-              onTap: () => setState(() {accueil=false;planning=false ; salaire=false; sanction=false;presence=false; rh=false;actualite=true;parametre=false;}),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              onTap: () => setState(() {
+                accueil = false;
+                planning = false;
+                salaire = false;
+                sanction = false;
+                presence = false;
+                rh = false;
+                actualite = true;
+                parametre = false;
+              }),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
                       Container(
                           height: 35,
                           width: 35,
-                          child: Icon(Icons.add_chart_rounded,color: mainColor5,)),
-                          w(10),
+                          child: Icon(
+                            Icons.chat,
+                            color: mainColor5,
+                          )),
+                      w(10),
                       Text(
-                        "Actualités",
+                        "Message",
                         style: TextStyle(
                           fontFamily: 'bold',
                           fontSize: 14,
@@ -336,21 +486,34 @@ class _HomeState extends State<Home> {
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: parametre? Color.fromARGB(17, 0, 0, 0) : Colors.white
-              //color: Color.fromARGB(17, 0, 0, 0)
-            ),
+                borderRadius: BorderRadius.circular(10),
+                color: parametre ? Color.fromARGB(17, 0, 0, 0) : Colors.white
+                //color: Color.fromARGB(17, 0, 0, 0)
+                ),
             child: InkWell(
-              onTap: () => setState(() {accueil=false;planning=false ; salaire=false; sanction=false;presence=false; rh=false;actualite=false;parametre=true;}),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              onTap: () => setState(() {
+                accueil = false;
+                planning = false;
+                salaire = false;
+                sanction = false;
+                presence = false;
+                rh = false;
+                actualite = false;
+                parametre = true;
+              }),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
                       Container(
                           height: 35,
                           width: 35,
-                          child: Icon(Icons.settings,color: mainColor5,)),
-                          w(10),
+                          child: Icon(
+                            Icons.settings,
+                            color: mainColor5,
+                          )),
+                      w(10),
                       Text(
                         "Paramètre",
                         style: TextStyle(

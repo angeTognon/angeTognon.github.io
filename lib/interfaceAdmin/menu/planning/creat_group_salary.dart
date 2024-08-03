@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:zth_app/widgets/wid_var.dart';
 
 class CreationGroupleSalarie extends StatefulWidget {
-  const  CreationGroupleSalarie({super.key});
+  const CreationGroupleSalarie({super.key});
 
   @override
   State<CreationGroupleSalarie> createState() => _CreationGroupleSalarieState();
@@ -74,6 +74,7 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
   }
 
   final GlobalKey _containerKey3 = GlobalKey();
+  final GlobalKey _containerKey33 = GlobalKey();
   final GlobalKey _containerKey4 = GlobalKey();
   final GlobalKey _containerKey_add_statut = GlobalKey();
 
@@ -96,82 +97,83 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
   List<List<String>> _selectedOptionsPerIndex = [];
 /* **************FIN***************** */
   void _showMultiSelectMenu(int index) {
-  _currentIndex = index;
-  _selectedOptions = index < _selectedOptionsPerIndex.length
-      ? List<bool>.generate(_options.length, (i) => _selectedOptionsPerIndex[index].contains(_options[i]))
-      : List.generate(_options.length, (_) => false);
+    _currentIndex = index;
+    _selectedOptions = index < _selectedOptionsPerIndex.length
+        ? List<bool>.generate(_options.length,
+            (i) => _selectedOptionsPerIndex[index].contains(_options[i]))
+        : List.generate(_options.length, (_) => false);
 
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        surfaceTintColor: Colors.white,
-        title: Text(
-          'Choisissez les personnes à qui\nvous souhaitez attribuer ces tâches',
-          style: TextStyle(fontFamily: 'normal', fontSize: 15),
-          textAlign: TextAlign.center,
-        ),
-        content: StatefulBuilder(
-          builder: (context, setState) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(_options.length, (index) {
-                return CheckboxListTile(
-                  title: Row(
-                    children: [
-                      CircleAvatar(
-                        child: Center(
-                          child: Icon(Icons.person),
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          surfaceTintColor: Colors.white,
+          title: Text(
+            'Choisissez les personnes à qui\nvous souhaitez attribuer ces tâches',
+            style: TextStyle(fontFamily: 'normal', fontSize: 15),
+            textAlign: TextAlign.center,
+          ),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(_options.length, (index) {
+                  return CheckboxListTile(
+                    title: Row(
+                      children: [
+                        CircleAvatar(
+                          child: Center(
+                            child: Icon(Icons.person),
+                          ),
                         ),
-                      ),
-                      w(20),
-                      Text(_options[index]),
-                    ],
-                  ),
-                  value: _selectedOptions[index],
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedOptions[index] = value ?? false;
-                    });
-                  },
-                );
-              }),
-            );
-          },
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
+                        w(20),
+                        Text(_options[index]),
+                      ],
+                    ),
+                    value: _selectedOptions[index],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedOptions[index] = value ?? false;
+                      });
+                    },
+                  );
+                }),
+              );
             },
-            child: Text('Cancel'),
           ),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                // Mettre à jour la liste _selectedOptionsPerIndex
-                if (index < _selectedOptionsPerIndex.length) {
-                  _selectedOptionsPerIndex[index] = [
-                    for (int i = 0; i < _selectedOptions.length; i++)
-                      if (_selectedOptions[i]) _options[i],
-                  ];
-                } else {
-                  _selectedOptionsPerIndex.add([
-                    for (int i = 0; i < _selectedOptions.length; i++)
-                      if (_selectedOptions[i]) _options[i],
-                  ]);
-                }
-                print('Selected :==> $_selectedOptionsPerIndex');
+          actions: [
+            TextButton(
+              onPressed: () {
                 Navigator.of(context).pop();
-              });
-            },
-            child: Text('Save'),
-          ),
-        ],
-      );
-    },
-  );
-}
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  // Mettre à jour la liste _selectedOptionsPerIndex
+                  if (index < _selectedOptionsPerIndex.length) {
+                    _selectedOptionsPerIndex[index] = [
+                      for (int i = 0; i < _selectedOptions.length; i++)
+                        if (_selectedOptions[i]) _options[i],
+                    ];
+                  } else {
+                    _selectedOptionsPerIndex.add([
+                      for (int i = 0; i < _selectedOptions.length; i++)
+                        if (_selectedOptions[i]) _options[i],
+                    ]);
+                  }
+                  print('Selected :==> $_selectedOptionsPerIndex');
+                  Navigator.of(context).pop();
+                });
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   String Statut = "Pas Commencé";
 
@@ -217,12 +219,13 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-            constraints: BoxConstraints(maxHeight: 210,minHeight: 140),
-        width: (MediaQuery.of(context).size.width*13.5)/16,
+        constraints: BoxConstraints(maxHeight: 250, minHeight: 100),
+        width: (MediaQuery.of(context).size.width * 13.5) / 16,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -233,14 +236,14 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                     _addItem();
                   },
                   child: Container(
-                    padding: EdgeInsets.only(left: 15,right: 15),
+                    padding: EdgeInsets.only(left: 15, right: 15),
                     height: 35,
                     decoration: BoxDecoration(
                         color: mainColor,
                         borderRadius: BorderRadius.circular(7)),
                     child: Center(
                       child: Text(
-                        "Créer un groupe de Salarié",
+                        "Ajouter un groupe de Salarié",
                         style: TextStyle(
                             color: Colors.white, fontFamily: 'normal'),
                       ),
@@ -250,12 +253,17 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
               ],
             ),
             h(20),
+            Text(
+              "Effectuez ici, la planification des Permanances et Garde de vos employés.",
+              style: TextStyle(color: Colors.black, fontFamily: 'normal'),
+            ),
+            h(20),
             Container(
               decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border.all(color: Colors.black12)),
               height: 40,
-                      width: (MediaQuery.of(context).size.width*13.5)/16,
+              width: (MediaQuery.of(context).size.width * 13.5) / 16,
               child: Row(
                 children: [
                   Container(
@@ -277,7 +285,7 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                     height: 40,
                     decoration: BoxDecoration(
                         border: Border.all(color: Colors.black12)),
-                    width: 300,
+                    width: 500,
                     child: Center(
                       child: Text(
                         "Personnes",
@@ -303,37 +311,51 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                       ),
                     ),
                   ),
-                    Container(
-                      height: 40,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black12)),
-                      width: 200,
-                      child: Center(
-                        child: Text(
-                          "Heure de début Travail",
-                          style: TextStyle(
-                              fontFamily: 'normal',
-                              fontSize: 13,
-                              color: Color.fromARGB(255, 0, 0, 0)),
-                        ),
+                  Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black12)),
+                    width: 220,
+                    child: Center(
+                      child: Text(
+                        "Type d'activité",
+                        style: TextStyle(
+                            fontFamily: 'normal',
+                            fontSize: 13,
+                            color: Color.fromARGB(255, 0, 0, 0)),
                       ),
                     ),
-                      Container(
-                      height: 40,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black12)),
-                      width: 200,
-                      child: Center(
-                        child: Text(
-                          "Heure de Fin Travail",
-                          style: TextStyle(
-                              fontFamily: 'normal',
-                              fontSize: 13,
-                              color: Color.fromARGB(255, 0, 0, 0)),
-                        ),
+                  ),
+                  /* Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black12)),
+                    width: 200,
+                    child: Center(
+                      child: Text(
+                        "Heure de début Travail",
+                        style: TextStyle(
+                            fontFamily: 'normal',
+                            fontSize: 13,
+                            color: Color.fromARGB(255, 0, 0, 0)),
                       ),
                     ),
-                  
+                  ),
+                  Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black12)),
+                    width: 200,
+                    child: Center(
+                      child: Text(
+                        "Heure de Fin Travail",
+                        style: TextStyle(
+                            fontFamily: 'normal',
+                            fontSize: 13,
+                            color: Color.fromARGB(255, 0, 0, 0)),
+                      ),
+                    ),
+                  ), */
                   Expanded(
                     child: Container(
                       height: 40,
@@ -357,176 +379,248 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
             h(15),
             Container(
               height: 100,
-              child: Expanded(
-                child: ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  itemCount: _itemWid.length,
-                  
-                  itemBuilder: (context, index) {
-                    return Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.black12)),
-                      height: 40,
-                      width: (MediaQuery.of(context).size.width * 15) / 16,
-                      child: Row(
-                        children: [
-                          Container(
-                            height: 40,
-                            width: 100,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
+              constraints: BoxConstraints(maxHeight: 500),
+              child: ListView.separated(
+                itemCount: _itemWid.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.black12)),
+                    height: 40,
+                    width: (MediaQuery.of(context).size.width * 15) / 16,
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 40,
+                          width: 100,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
                                   height: 40,
                                   width: 100,
                                   child: Center(
-                                    child: Text("1"),
-                                  )
-                                ),
-                                
-                              ],
-                            ),
+                                    child: Text("${index + 1}"),
+                                  )),
+                            ],
                           ),
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                _showMultiSelectMenu(index);
-                              });
-                            },
-                            child: Container(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black12),
-                              ),
-                              width: 300,
-                              child: Center(
-                                child:
-                                    _selectedOptionsPerIndex.length > index &&
-                                            _selectedOptionsPerIndex[index]
-                                                .isNotEmpty
-                                        ? Text(
-                                            "${_selectedOptionsPerIndex[index].join(' / ')}",
-                                            style: TextStyle(
-                                                fontFamily: 'normal',
-                                                fontSize: 12),
-                                          )
-                                        : Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                Icons.add_circle_outline_sharp,
-                                                color: mainColor2,
-                                              ),
-                                              w(20),
-                                              CircleAvatar(
-                                                backgroundColor: mainColor,
-                                                child: Icon(
-                                                  Icons.person,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ],
+                        ),
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              _showMultiSelectMenu(index);
+                            });
+                          },
+                          child: Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black12),
+                            ),
+                            width: 500,
+                            child: Center(
+                              child: _selectedOptionsPerIndex.length > index &&
+                                      _selectedOptionsPerIndex[index].isNotEmpty
+                                  ? Text(
+                                      "${_selectedOptionsPerIndex[index].join(' / ')}",
+                                      style: TextStyle(
+                                          fontFamily: 'normal', fontSize: 12),
+                                    )
+                                  : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.add_circle_outline_sharp,
+                                          color: mainColor2,
+                                        ),
+                                        w(20),
+                                        CircleAvatar(
+                                          backgroundColor: mainColor,
+                                          child: Icon(
+                                            Icons.person,
+                                            color: Colors.white,
                                           ),
-                              ),
+                                        ),
+                                      ],
+                                    ),
                             ),
                           ),
-                          Container(
-                            height: 45,
-                            width: 200,
-                            padding: EdgeInsets.only(
-                                left: 15, bottom: 15, right: 15),
-                            child: TextFormField(
-                              onTap: () {
-                                _showDatePicker(index);
-                              },
-                              style: TextStyle(
+                        ),
+                        Container(
+                          height: 45,
+                          width: 200,
+                          padding:
+                              EdgeInsets.only(left: 15, bottom: 15, right: 15),
+                          child: TextFormField(
+                            onTap: () {
+                              _showDatePicker(index);
+                            },
+                            style: TextStyle(
+                                fontFamily: 'normal',
+                                fontSize: 13,
+                                color: Colors.black),
+                            decoration: InputDecoration(
+                              labelStyle: TextStyle(
                                   fontFamily: 'normal',
-                                  fontSize: 13,
-                                  color: Colors.black),
-                              decoration: InputDecoration(
-                                labelStyle: TextStyle(
-                                    fontFamily: 'normal',
-                                    fontSize: 14,
-                                    color: Colors.black45),
-                                border: InputBorder.none,
-                                suffixIcon: IconButton(
-                                  icon: Icon(Icons.calendar_today),
-                                  onPressed: () {
-                                    _showDatePicker(index);
-                                  },
-                                ),
-                              ),
-                              readOnly: true,
-                              controller: TextEditingController(
-                                text: _selectedDate != null
-                                    ? DateFormat('dd/MM/yyyy')
-                                        .format(_selectedDate[index])
-                                    : '',
+                                  fontSize: 14,
+                                  color: Colors.black45),
+                              border: InputBorder.none,
+                              suffixIcon: IconButton(
+                                icon: Icon(Icons.calendar_today),
+                                onPressed: () {
+                                  _showDatePicker(index);
+                                },
                               ),
                             ),
-                          ),
-                          InkWell(
-                            onTap: () {
-                             _selectTime();
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black12)),
-                              width: 200,
-                              height: 35,
-                              // key: _containerKey4,
-                              child: Center(
-                                child: Text(_selectedTime==null?"Cliquez ici pour choisir":"${_selectedTime.hour} h ${_selectedTime.minute}",style: TextStyle(
-                                  color: Colors.black,fontFamily: 'normal',fontSize: 13
-                                ),),
-                              )
+                            readOnly: true,
+                            controller: TextEditingController(
+                              text: _selectedDate != null
+                                  ? DateFormat('dd/MM/yyyy')
+                                      .format(_selectedDate[index])
+                                  : '',
                             ),
                           ),
-                          InkWell(
-                            onTap: () {
-                             _selectTime2();
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black12)),
-                              width: 200,
-                              height: 35,
-                              // key: _containerKey4,
-                              child: Center(
-                                child: Text(_selectedTime2==null?"Cliquez ici pour choisir":"${_selectedTime2.hour} h ${_selectedTime2.minute}",style: TextStyle(
-                                  color: Colors.black,fontFamily: 'normal',fontSize: 13
-                                ),),
-                              )
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.black12),
-                                  color: mainColor2),
-                              width: 100,
-                              child: Center(
-                                child: Text(
-                                  "Créer ",
-                                  style: TextStyle(
-                                      fontFamily: 'normal',
-                                      fontSize: 13,
-                                      color:
-                                          Color.fromARGB(255, 255, 255, 255)),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
+                        InkWell(
+                  onTap: () {
+                    final RenderBox container = _containerKey33.currentContext
+                        ?.findRenderObject() as RenderBox;
+                    final Offset containerPosition =
+                        container.localToGlobal(Offset.zero);
+                    final Size containerSize = container.size;
+                    showMenu(
+                      surfaceTintColor: Colors.white,
+                      context: context,
+                      position: RelativeRect.fromLTRB(
+                        containerPosition.dx,
+                        containerPosition.dy + containerSize.height,
+                        MediaQuery.of(context).size.width -
+                            containerPosition.dx -
+                            containerSize.width,
+                        0,
                       ),
+                      items: [
+                        PopupMenuItem(
+                          child: Text(
+                            "Permanence",
+                            style:
+                                TextStyle(fontFamily: 'normal', fontSize: 13),
+                          ),
+                          value: 2,
+                        ),
+                        PopupMenuItem(
+                          child: Text(
+                            'Garde',
+                            style:
+                                TextStyle(fontFamily: 'normal', fontSize: 13),
+                          ),
+                          value: 2,
+                        ),
+                        
+                      ],
+
+                      elevation: 8.0, // Adjust the elevation for the box shadow
                     );
                   },
+                  child: Container(
+                    padding:
+                        EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
+                    width: 220,
+                    height: 35,
+                    key: _containerKey33,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Colors.black26)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Choisir un type d'activité",
+                          style: TextStyle(
+                              fontFamily: 'normal',
+                              fontSize: 13,
+                              color: const Color.fromARGB(154, 0, 0, 0)),
+                        ),
+                        Icon(
+                          Icons.arrow_drop_down_rounded,
+                          color: const Color.fromARGB(154, 0, 0, 0),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
+                        /* InkWell(
+                          onTap: () {
+                            _selectTime();
+                          },
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.black12)),
+                              width: 200,
+                              height: 35,
+                              // key: _containerKey4,
+                              child: Center(
+                                child: Text(
+                                  _selectedTime == null
+                                      ? "Cliquez ici pour choisir"
+                                      : "${_selectedTime.hour} h ${_selectedTime.minute}",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'normal',
+                                      fontSize: 13),
+                                ),
+                              )),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            _selectTime2();
+                          },
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.black12)),
+                              width: 200,
+                              height: 35,
+                              // key: _containerKey4,
+                              child: Center(
+                                child: Text(
+                                  _selectedTime2 == null
+                                      ? "Cliquez ici pour choisir"
+                                      : "${_selectedTime2.hour} h ${_selectedTime2.minute}",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'normal',
+                                      fontSize: 13),
+                                ),
+                              )),
+                        ), */
+                        Expanded(
+                          child: Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black12),
+                                color: mainColor2),
+                            width: 100,
+                            child: Center(
+                              child: Text(
+                                "Créer ",
+                                style: TextStyle(
+                                    fontFamily: 'normal',
+                                    fontSize: 13,
+                                    color: Color.fromARGB(255, 255, 255, 255)),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) {
+                  return Divider();
+                },
               ),
-            ),
+            )
           ],
         ),
       ),
@@ -854,7 +948,8 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
               child: Container(
                 height: 40,
                 decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black12), color: mainColor2),
+                    border: Border.all(color: Colors.black12),
+                    color: mainColor2),
                 width: 170,
                 child: Center(
                   child: Text(
