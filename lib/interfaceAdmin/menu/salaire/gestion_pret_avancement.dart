@@ -298,24 +298,29 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
             width: 180,
             height: 50,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CircleAvatar(
-                  backgroundColor: mainColor3,
-                  child: Icon(
-                    Icons.person,
-                    color: mainColor2,
+                Container(width: 40,              child: CircleAvatar(
+                    backgroundColor: mainColor3,
+                    child: Icon(
+                      Icons.person,
+                      color: mainColor2,
+                    ),
                   ),
                 ),
                 w(20),
-                Center(
-                  child: Text(
-                    nomprenom,
-                    style: TextStyle(
-                        fontFamily: 'normal',
-                        color: Color.fromARGB(255, 0, 0, 0),
-                        fontSize: 13),
-                  ),
+                Row(mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(width: 120,
+                      child: Text(
+                        nomprenom,
+                        style: TextStyle(
+                            fontFamily: 'normal',
+                            color: Color.fromARGB(255, 0, 0, 0),
+                            fontSize: 13),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

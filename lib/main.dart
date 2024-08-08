@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zth_app/interfaceAdmin/home.dart';
 import 'package:zth_app/interfaceAdmin/menu/connexion/login.dart';
 import 'package:zth_app/interfaceEmploy%C3%A9/home_employe.dart';
 import 'package:zth_app/widgets/wid_var.dart';
@@ -85,7 +86,7 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: mainColor,),
         useMaterial3: true,
       ),
-      home: Login()
+      home: Home()
     );
   }
 }

@@ -58,6 +58,7 @@ dependencies:
   typewritertext: ^3.0.8
   http:
   flutter_phoenix:
+  url_launcher: 
 
 dev_dependencies:
   flutter_test:

@@ -76,7 +76,7 @@ class _LoginState extends State<Login> {
       eya = true;
       prefs.setBool('isConnected', eya);
 
-      user_email = _emailOrPhoneController.text;
+      user_email = _emailOrPhoneController.text;//******************************************/
 
       final userPref = await SharedPreferences.getInstance();
 

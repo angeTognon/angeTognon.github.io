@@ -19,8 +19,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   /* , */
-  bool accueil = true;
-  bool planning = false;
+  bool accueil = false;
+  bool planning = true;
   bool salaire = false;
   bool sanction = false;
   bool presence = false;
@@ -127,7 +127,7 @@ class _HomeState extends State<Home> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "PharmaRH",
+                      "PharmaRH °",
                       style: TextStyle(color: Colors.black, fontFamily: 'bold'),
                     ),
                     h(4),

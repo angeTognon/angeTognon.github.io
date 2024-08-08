@@ -1,9 +1,15 @@
 // ignore_for_file: file_names, non_constant_identifier_names
 
+import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:zth_app/widgets/wid_var.dart';
+import 'package:http/http.dart' as http;
 
 class CreationGroupleSalarie extends StatefulWidget {
   const CreationGroupleSalarie({super.key});
@@ -19,13 +25,14 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
   List<GlobalKey> _itemsKey = [];
   List<String> Statuts = [];
   List<DateTime> _selectedDate = [];
-
-  List<bool> _selectedOptions = List.generate(5, (_) => false);
+  List<bool> _selectedOptions = [];
 
   @override
   void initState() {
     super.initState();
     // Initialize the first TextEditingController
+    _selectedOptions = List.generate(30, (_) => false);
+
     for (var i = 0; i <= 20; i++) {
       _textControllers.add(TextEditingController());
       _itemsKey.add(GlobalKey());
@@ -85,901 +92,567 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
   List<String> _items = [];
   List<Widget> _itemWid = [];
   String nomPrenomSalarie = "";
-/* **************Début***************** */
-  List<String> _options = [
-    'Carine ZOGNO',
-    'Tania H.',
-    'Jean Paul T.',
-    'Damien k.',
-    'Olivia S.'
-  ];
+  List<String> _options = [];
   int _currentIndex = 0;
+  getSalary() async {
+    var url = "https://zoutechhub.com/pharmaRh/getSalaryNomPrenom.php";
+    var response = await http.get(Uri.parse(url));
+    var pub = await json.decode(response.body);
+    return pub;
+  }
+
   List<List<String>> _selectedOptionsPerIndex = [];
-/* **************FIN***************** */
+  void updateSelectedOptions(int index) {
+    if (index < _selectedOptionsPerIndex.length &&
+        _selectedOptionsPerIndex.isNotEmpty) {
+      for (int i = 0; i < _options.length; i++) {
+        if (i < _selectedOptions.length) {
+          _selectedOptions[i] =
+              _selectedOptionsPerIndex[index].contains(_options[i]);
+        } else {
+          _selectedOptions
+              .add(_selectedOptionsPerIndex[index].contains(_options[i]));
+        }
+      }
+    } else {
+      // Si l'index est en dehors de la plage de _selectedOptionsPerIndex,
+      // ou si _selectedOptionsPerIndex est vide, on réinitialise _selectedOptions à false
+      while (_selectedOptions.length < _options.length) {
+        _selectedOptions.add(false);
+      }
+    }
+  }
+
+  List<String> _selectedPersonnes = [];
+    List<String> _idPersonnes = [];
+
+  bool isOK = false;
+
   void _showMultiSelectMenu(int index) {
-    _currentIndex = index;
-    _selectedOptions = index < _selectedOptionsPerIndex.length
-        ? List<bool>.generate(_options.length,
-            (i) => _selectedOptionsPerIndex[index].contains(_options[i]))
-        : List.generate(_options.length, (_) => false);
+    setState(() {
+      if (_selectedOptionsPerIndex.isNotEmpty &&
+          index < _selectedOptionsPerIndex.length) {
+        updateSelectedOptions(index);
+      } else {
+        // Si _selectedOptionsPerIndex est vide ou si l'index est en dehors de la plage,
+        // on réinitialise _selectedOptions à false
+        while (_selectedOptions.length < _options.length) {
+          _selectedOptions.add(false);
+        }
+      }
+    });
 
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          surfaceTintColor: Colors.white,
-          title: Text(
-            'Choisissez les personnes à qui\nvous souhaitez attribuer ces tâches',
-            style: TextStyle(fontFamily: 'normal', fontSize: 15),
-            textAlign: TextAlign.center,
-          ),
-          content: StatefulBuilder(
-            builder: (context, setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(_options.length, (index) {
-                  return CheckboxListTile(
-                    title: Row(
-                      children: [
-                        CircleAvatar(
-                          child: Center(
-                            child: Icon(Icons.person),
-                          ),
-                        ),
-                        w(20),
-                        Text(_options[index]),
-                      ],
-                    ),
-                    value: _selectedOptions[index],
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedOptions[index] = value ?? false;
-                      });
-                    },
-                  );
-                }),
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
+        return StatefulBuilder(
+          builder: (context, setState) => AlertDialog(
+            surfaceTintColor: Colors.white,
+            title: Text(
+              'Choisissez les personnes à qui\nvous souhaitez attribuer ces tâches',
+              style: TextStyle(fontFamily: 'normal', fontSize: 15),
+              textAlign: TextAlign.center,
             ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  // Mettre à jour la liste _selectedOptionsPerIndex
-                  if (index < _selectedOptionsPerIndex.length) {
-                    _selectedOptionsPerIndex[index] = [
-                      for (int i = 0; i < _selectedOptions.length; i++)
-                        if (_selectedOptions[i]) _options[i],
-                    ];
-                  } else {
-                    _selectedOptionsPerIndex.add([
-                      for (int i = 0; i < _selectedOptions.length; i++)
-                        if (_selectedOptions[i]) _options[i],
-                    ]);
+            content: Container(
+              height: MediaQuery.of(context).size.height / 2.5,
+              width: 300,
+              child: FutureBuilder(
+                future: getSalary(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                          "Erreur de chargement. Veuillez relancer l'application"),
+                    );
                   }
-                  print('Selected :==> $_selectedOptionsPerIndex');
-                  Navigator.of(context).pop();
-                });
-              },
-              child: Text('Save'),
+                  if (snapshot.hasData) {
+                    return snapshot.data.isEmpty
+                        ? Column(
+                            children: [
+                              h(20),
+                              Icon(
+                                Icons.safety_check_rounded,
+                                size: 100,
+                                color: mainColor,
+                              ),
+                              h(20),
+                              Container(
+                                margin: EdgeInsets.only(left: 20, right: 20),
+                                child: Text(
+                                  "Oups, Vous n'avez aucun employé pour l'instant ",
+                                  style: TextStyle(fontSize: 17),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ],
+                          )
+                        : ListView.builder(
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (context, index) {
+                              updateSelectedOptions(index);
+                              return CheckboxListTile(
+                                title: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      child: Center(
+                                        child: Icon(Icons.person),
+                                      ),
+                                    ),
+                                    w(20),
+                                    Text(
+                                        "${snapshot.data[index]['prenom']} ${snapshot.data[index]['nom']}"),
+                                  ],
+                                ),
+                                value: _selectedOptions[index],
+                                onChanged: (value) {
+                                  setState(() {
+                                    /* _idPersonnes */
+                                    _selectedOptions[index] = value!;
+                                    if (value!) {
+                                      _selectedPersonnes.add("${snapshot.data[index]['prenom']} ${snapshot.data[index]['nom']}");
+                                      _idPersonnes.add("${snapshot.data[index]['id']}");
+                                    } else {
+                                      _selectedPersonnes.remove("${snapshot.data[index]['prenom']} ${snapshot.data[index]['nom']}");
+                                      _idPersonnes.remove("${snapshot.data[index]['id']}");
+                                    }
+                                  });
+                                },
+                              );
+                            },
+                          );
+                  }
+                  return Center(
+                    child: Container(
+                      height: 150,
+                      width: 150,
+                      child: Lottie.asset("assets/images/anim.json"),
+                    ),
+                  );
+                },
+              ),
             ),
-          ],
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    isOK = true;
+                    print("**************");
+                    print(_selectedPersonnes);
+                    Navigator.pop(context);
+                  });
+                },
+                child: Text('Save'),
+              ),
+            ],
+          ),
         );
       },
     );
   }
 
   String Statut = "Pas Commencé";
+  bool show = false;
+  String _chars =
+      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  Random _rnd = Random();
+  String codeCommande = "";
+  String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
-  void _showDatePicker(int index) {
-    showDatePicker(
-      context: context,
-      initialDate: _selectedDate[index] ?? DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
-    ).then((pickedDate) {
-      if (pickedDate != null) {
-        setState(() {
-          _selectedDate[index] = pickedDate;
-        });
-      }
+  inscription(String id_employe,nomPrenom, dateTravail, typeActivite,
+      codeEquipe) async {
+    setState(() {
+      show = true;
     });
-  }
-
-  TimeOfDay _selectedTime = TimeOfDay.now();
-
-  Future<void> _selectTime() async {
-    final TimeOfDay? pickedTime = await showTimePicker(
-      context: context,
-      initialTime: _selectedTime,
-    );
-    if (pickedTime != null && pickedTime != _selectedTime) {
+    // EncryptData(mpController.text);
+    var url =
+        "https://zoutechhub.com/pharmaRh/creatEquipe.php?id_employe=$id_employe&nomPrenom=$nomPrenom&dateTravail=$dateTravail&typeActivite=$typeActivite&codeEquipe=$codeEquipe";
+    var response = await http.post(Uri.parse(url));
+    print(response.body);
+    print(response.statusCode);
+    if (response.body == "OK") {
       setState(() {
-        _selectedTime = pickedTime;
+        show = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Color.fromARGB(255, 18, 133, 22),
+          content: Text(
+            "Création Réussie.",
+            style: TextStyle(
+                fontFamily: 'normal',
+                color: Colors.white,
+                fontWeight: FontWeight.bold),
+          )));
+      //Navigator.pop(context);
+    } else {
+      setState(() {
+        show = false;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.redAccent,
+            content: Text(
+              "Erreur. Veuillez réessayer ",
+              style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
+            )));
       });
     }
   }
 
-  TimeOfDay _selectedTime2 = TimeOfDay.now();
+  
 
-  Future<void> _selectTime2() async {
-    final TimeOfDay? pickedTime2 = await showTimePicker(
-      context: context,
-      initialTime: _selectedTime2,
-    );
-    if (pickedTime2 != null && pickedTime2 != _selectedTime2) {
-      setState(() {
-        _selectedTime2 = pickedTime2;
-      });
-    }
-  }
-
+  DateTime _selectedDate0 = DateTime.now();
+  String formattedDate1 = "";
+  String typeActivite = "";
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        constraints: BoxConstraints(maxHeight: 250, minHeight: 100),
-        width: (MediaQuery.of(context).size.width * 13.5) / 16,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                InkWell(
-                  onTap: () {
-                    _addItem();
-                  },
-                  child: Container(
-                    padding: EdgeInsets.only(left: 15, right: 15),
-                    height: 35,
-                    decoration: BoxDecoration(
-                        color: mainColor,
-                        borderRadius: BorderRadius.circular(7)),
-                    child: Center(
-                      child: Text(
-                        "Ajouter un groupe de Salarié",
-                        style: TextStyle(
-                            color: Colors.white, fontFamily: 'normal'),
-                      ),
+    return Row(
+      children: [
+        InkWell(
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return StatefulBuilder(
+                  builder: (context, setState) => AlertDialog(
+                    surfaceTintColor: Colors.white,
+                    title: Text(
+                      "Création d'un groupe d'employé",
+                      style: TextStyle(
+                          fontFamily: 'bold', fontSize: 18, color: mainColor),
+                      textAlign: TextAlign.center,
                     ),
-                  ),
-                ),
-              ],
-            ),
-            h(20),
-            Text(
-              "Effectuez ici, la planification des Permanances et Garde de vos employés.",
-              style: TextStyle(color: Colors.black, fontFamily: 'normal'),
-            ),
-            h(20),
-            Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.black12)),
-              height: 40,
-              width: (MediaQuery.of(context).size.width * 13.5) / 16,
-              child: Row(
-                children: [
-                  Container(
-                    height: 40,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black12)),
-                    width: 100,
-                    child: Center(
-                      child: Text(
-                        "Groupe N°",
-                        style: TextStyle(
-                            fontFamily: 'normal',
-                            fontSize: 13,
-                            color: Color.fromARGB(255, 0, 0, 0)),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 40,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black12)),
-                    width: 500,
-                    child: Center(
-                      child: Text(
-                        "Personnes",
-                        style: TextStyle(
-                            fontFamily: 'normal',
-                            fontSize: 13,
-                            color: Color.fromARGB(255, 0, 0, 0)),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 40,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black12)),
-                    width: 200,
-                    child: Center(
-                      child: Text(
-                        "Date de travail",
-                        style: TextStyle(
-                            fontFamily: 'normal',
-                            fontSize: 13,
-                            color: Color.fromARGB(255, 0, 0, 0)),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 40,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black12)),
-                    width: 220,
-                    child: Center(
-                      child: Text(
-                        "Type d'activité",
-                        style: TextStyle(
-                            fontFamily: 'normal',
-                            fontSize: 13,
-                            color: Color.fromARGB(255, 0, 0, 0)),
-                      ),
-                    ),
-                  ),
-                  /* Container(
-                    height: 40,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black12)),
-                    width: 200,
-                    child: Center(
-                      child: Text(
-                        "Heure de début Travail",
-                        style: TextStyle(
-                            fontFamily: 'normal',
-                            fontSize: 13,
-                            color: Color.fromARGB(255, 0, 0, 0)),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 40,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black12)),
-                    width: 200,
-                    child: Center(
-                      child: Text(
-                        "Heure de Fin Travail",
-                        style: TextStyle(
-                            fontFamily: 'normal',
-                            fontSize: 13,
-                            color: Color.fromARGB(255, 0, 0, 0)),
-                      ),
-                    ),
-                  ), */
-                  Expanded(
-                    child: Container(
-                      height: 40,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black12)),
-                      width: 100,
-                      child: Center(
-                        child: Text(
-                          "Action",
-                          style: TextStyle(
-                              fontFamily: 'normal',
-                              fontSize: 13,
-                              color: Color.fromARGB(255, 0, 0, 0)),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            h(15),
-            Container(
-              height: 100,
-              constraints: BoxConstraints(maxHeight: 500),
-              child: ListView.separated(
-                itemCount: _itemWid.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.black12)),
-                    height: 40,
-                    width: (MediaQuery.of(context).size.width * 15) / 16,
-                    child: Row(
-                      children: [
-                        Container(
-                          height: 40,
-                          width: 100,
-                          child: Row(
+                    content: Container(
+                      height: MediaQuery.of(context).size.height / 1.8,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Divider(),
+                          h(20),
+                          Text(
+                            "1- Veuillez choisir les membres de l'équipe",
+                            style: TextStyle(
+                              fontFamily: 'bold',
+                              fontSize: 15,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          h(20),
+                          Container(
+                            height: 220,
+                            width: MediaQuery.of(context).size.width / 2,
+                            child: FutureBuilder(
+                              future: getSalary(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot snapshot) {
+                                if (snapshot.hasError) {
+                                  return Center(
+                                    child: Text(
+                                        "Erreur de chargement. Veuillez relancer l'application"),
+                                  );
+                                }
+                                if (snapshot.hasData) {
+                                  return snapshot.data.isEmpty
+                                      ? Column(
+                                          children: [
+                                            h(20),
+                                            Icon(
+                                              Icons.safety_check_rounded,
+                                              size: 100,
+                                              color: mainColor,
+                                            ),
+                                            h(20),
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                  left: 20, right: 20),
+                                              child: Text(
+                                                "Oups, Vous n'avez aucun employé pour l'instant ",
+                                                style: TextStyle(fontSize: 17),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      : ListView.builder(
+                                          itemCount: snapshot.data.length,
+                                          itemBuilder: (context, index) {
+                                            updateSelectedOptions(index);
+                                            return CheckboxListTile(
+                                              title: Row(
+                                                children: [
+                                                  CircleAvatar(
+                                                    child: Center(
+                                                      child: Icon(Icons.person),
+                                                    ),
+                                                  ),
+                                                  w(20),
+                                                  Text(
+                                                      "${snapshot.data[index]['prenom']} ${snapshot.data[index]['nom']}"),
+                                                ],
+                                              ),
+                                              value: _selectedOptions[index],
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _selectedOptions[index] =
+                                                      value!;
+                                                  if (value!) {
+                                                    _idPersonnes.add("${snapshot.data[index]['id']}");
+                                                    _selectedPersonnes.add("${snapshot.data[index]['prenom']} ${snapshot.data[index]['nom']}");
+                                                  } else {
+                                                    _idPersonnes.remove("${snapshot.data[index]['id']}");
+                                                    _selectedPersonnes.remove("${snapshot.data[index]['prenom']} ${snapshot.data[index]['nom']}");
+                                                  }
+                                                });
+                                              },
+                                            );
+                                          },
+                                        );
+                                }
+                                return Center(
+                                  child: Container(
+                                    height: 150,
+                                    width: 150,
+                                    child:
+                                        Lottie.asset("assets/images/anim.json"),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          h(10),
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(
-                                  height: 40,
-                                  width: 100,
-                                  child: Center(
-                                    child: Text("${index + 1}"),
-                                  )),
+                              Column(
+                                children: [
+                                  Text(
+                                    "2- Date de Permanence / Garde : ",
+                                    style: TextStyle(
+                                      fontFamily: 'bold',
+                                      fontSize: 15,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  h(20),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(color: mainColor)),
+                                    height: 45,
+                                    width: 300,
+                                    padding: EdgeInsets.only(left: 10, top: 3),
+                                    child: TextFormField(
+                                      onTap: () {
+                                        showDatePicker(
+                                          
+                                          context: context,
+                                          initialDate:
+                                              _selectedDate0 ?? DateTime.now(),
+                                          firstDate: DateTime(1900),
+                                          lastDate: DateTime(2100),
+                                        ).then((pickedDate) {
+                                          if (pickedDate != null) {
+                                            setState(() {
+                                              _selectedDate0 = pickedDate;
+                                              formattedDate1 =
+                                                  "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year.toString()}";
+                                              print(formattedDate1);
+                                            });
+                                          }
+                                        });
+                                      },
+                                      decoration: InputDecoration(
+                                        labelStyle: TextStyle(
+                                            fontFamily: 'normal',
+                                            fontSize: 14,
+                                            color: Colors.black45),
+                                        border: InputBorder.none,
+                                        suffixIcon: IconButton(
+                                          icon: Icon(Icons.calendar_today),
+                                          onPressed: () {},
+                                        ),
+                                      ),
+                                      readOnly: true,
+                                      style: TextStyle(
+                                          fontFamily: "normal", fontSize: 14),
+                                      controller: TextEditingController(
+                                          text: formattedDate1 != ""
+                                              ? formattedDate1
+                                              : "Cliquez ici pour choisir"),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                    "3- Type d'activité ",
+                                    style: TextStyle(
+                                      fontFamily: 'bold',
+                                      fontSize: 15,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  h(20),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(color: mainColor)),
+                                    height: 45,
+                                    width: 300,
+                                    child: InkWell(
+                                      onTap: () {
+                                        final RenderBox container = _itemsKey[0]
+                                            .currentContext
+                                            ?.findRenderObject() as RenderBox;
+                                        final Offset containerPosition =
+                                            container
+                                                .localToGlobal(Offset.zero);
+                                        final Size containerSize =
+                                            container.size;
+                                        showMenu(
+                                          surfaceTintColor: Colors.white,
+                                          context: context,
+                                          position: RelativeRect.fromLTRB(
+                                            containerPosition.dx,
+                                            containerPosition.dy +
+                                                containerSize.height,
+                                            MediaQuery.of(context).size.width -
+                                                containerPosition.dx -
+                                                containerSize.width,
+                                            0,
+                                          ),
+                                          items: [
+                                            PopupMenuItem(
+                                              onTap: () {
+                                                setState(() => typeActivite =
+                                                    "Permanence");
+                                              },
+                                              child: Text(
+                                                "Permanence",
+                                                style: TextStyle(
+                                                    fontFamily: 'normal',
+                                                    fontSize: 13),
+                                              ),
+                                              value: 2,
+                                            ),
+                                            PopupMenuItem(
+                                              onTap: () {
+                                                setState(() =>
+                                                    typeActivite = "Garde");
+                                              },
+                                              child: Text(
+                                                'Garde',
+                                                style: TextStyle(
+                                                    fontFamily: 'normal',
+                                                    fontSize: 13),
+                                              ),
+                                              value: 2,
+                                            ),
+                                          ],
+
+                                          elevation:
+                                              8.0, // Adjust the elevation for the box shadow
+                                        );
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 5,
+                                            right: 5,
+                                            top: 5,
+                                            bottom: 5),
+                                        width: 220,
+                                        height: 35,
+                                        key: _itemsKey[0],
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              typeActivite == ""
+                                                  ? "Choisir un type d'activité"
+                                                  : typeActivite,
+                                              style: TextStyle(
+                                                  fontFamily: "normal",
+                                                  fontSize: 14),
+                                            ),
+                                            Icon(
+                                              Icons.arrow_drop_down_rounded,
+                                              color: const Color.fromARGB(
+                                                  154, 0, 0, 0),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              _showMultiSelectMenu(index);
-                            });
-                          },
-                          child: Container(
-                            height: 40,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black12),
-                            ),
-                            width: 500,
-                            child: Center(
-                              child: _selectedOptionsPerIndex.length > index &&
-                                      _selectedOptionsPerIndex[index].isNotEmpty
-                                  ? Text(
-                                      "${_selectedOptionsPerIndex[index].join(' / ')}",
-                                      style: TextStyle(
-                                          fontFamily: 'normal', fontSize: 12),
-                                    )
-                                  : Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.add_circle_outline_sharp,
-                                          color: mainColor2,
-                                        ),
-                                        w(20),
-                                        CircleAvatar(
-                                          backgroundColor: mainColor,
-                                          child: Icon(
-                                            Icons.person,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          height: 45,
-                          width: 200,
-                          padding:
-                              EdgeInsets.only(left: 15, bottom: 15, right: 15),
-                          child: TextFormField(
-                            onTap: () {
-                              _showDatePicker(index);
-                            },
-                            style: TextStyle(
-                                fontFamily: 'normal',
-                                fontSize: 13,
-                                color: Colors.black),
-                            decoration: InputDecoration(
-                              labelStyle: TextStyle(
-                                  fontFamily: 'normal',
-                                  fontSize: 14,
-                                  color: Colors.black45),
-                              border: InputBorder.none,
-                              suffixIcon: IconButton(
-                                icon: Icon(Icons.calendar_today),
-                                onPressed: () {
-                                  _showDatePicker(index);
-                                },
-                              ),
-                            ),
-                            readOnly: true,
-                            controller: TextEditingController(
-                              text: _selectedDate != null
-                                  ? DateFormat('dd/MM/yyyy')
-                                      .format(_selectedDate[index])
-                                  : '',
-                            ),
-                          ),
-                        ),
-                        InkWell(
-                  onTap: () {
-                    final RenderBox container = _containerKey33.currentContext
-                        ?.findRenderObject() as RenderBox;
-                    final Offset containerPosition =
-                        container.localToGlobal(Offset.zero);
-                    final Size containerSize = container.size;
-                    showMenu(
-                      surfaceTintColor: Colors.white,
-                      context: context,
-                      position: RelativeRect.fromLTRB(
-                        containerPosition.dx,
-                        containerPosition.dy + containerSize.height,
-                        MediaQuery.of(context).size.width -
-                            containerPosition.dx -
-                            containerSize.width,
-                        0,
+                        ],
                       ),
-                      items: [
-                        PopupMenuItem(
-                          child: Text(
-                            "Permanence",
-                            style:
-                                TextStyle(fontFamily: 'normal', fontSize: 13),
-                          ),
-                          value: 2,
-                        ),
-                        PopupMenuItem(
-                          child: Text(
-                            'Garde',
-                            style:
-                                TextStyle(fontFamily: 'normal', fontSize: 13),
-                          ),
-                          value: 2,
-                        ),
-                        
-                      ],
-
-                      elevation: 8.0, // Adjust the elevation for the box shadow
-                    );
-                  },
-                  child: Container(
-                    padding:
-                        EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
-                    width: 220,
-                    height: 35,
-                    key: _containerKey33,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: Colors.black26)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Choisir un type d'activité",
-                          style: TextStyle(
-                              fontFamily: 'normal',
-                              fontSize: 13,
-                              color: const Color.fromARGB(154, 0, 0, 0)),
-                        ),
-                        Icon(
-                          Icons.arrow_drop_down_rounded,
-                          color: const Color.fromARGB(154, 0, 0, 0),
-                        )
-                      ],
                     ),
-                  ),
-                ),
-                        /* InkWell(
-                          onTap: () {
-                            _selectTime();
-                          },
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.black12)),
-                              width: 200,
-                              height: 35,
-                              // key: _containerKey4,
-                              child: Center(
-                                child: Text(
-                                  _selectedTime == null
-                                      ? "Cliquez ici pour choisir"
-                                      : "${_selectedTime.hour} h ${_selectedTime.minute}",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: 'normal',
-                                      fontSize: 13),
-                                ),
-                              )),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            _selectTime2();
-                          },
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.black12)),
-                              width: 200,
-                              height: 35,
-                              // key: _containerKey4,
-                              child: Center(
-                                child: Text(
-                                  _selectedTime2 == null
-                                      ? "Cliquez ici pour choisir"
-                                      : "${_selectedTime2.hour} h ${_selectedTime2.minute}",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: 'normal',
-                                      fontSize: 13),
-                                ),
-                              )),
-                        ), */
-                        Expanded(
-                          child: Container(
-                            height: 40,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black12),
-                                color: mainColor2),
-                            width: 100,
-                            child: Center(
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Annuler'),
+                      ),
+                      show
+                          ? CircularProgressIndicator()
+                          : ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: mainColor),
+                              onPressed: () {
+                                codeCommande = getRandomString(10);
+                                for (int i = 0; i < _selectedPersonnes.length;i++) {
+                                  print(i);
+                                  setState((){
+                                    inscription(
+                                        _idPersonnes[i],
+                                        _selectedPersonnes[i],
+                                        formattedDate1,
+                                        typeActivite,
+                                        codeCommande);
+                                  });
+                                 
+                                }
+                                Navigator.of(context).pop();
+                              },
                               child: Text(
-                                "Créer ",
+                                "Créer",
                                 style: TextStyle(
-                                    fontFamily: 'normal',
-                                    fontSize: 13,
-                                    color: Color.fromARGB(255, 255, 255, 255)),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return Divider();
-                },
+                                    color: Colors.white, fontFamily: 'bold'),
+                              ))
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+          child: Container(
+            padding: EdgeInsets.only(left: 5, right: 5),
+            height: 25,
+            decoration: BoxDecoration(
+                color: mainColor, borderRadius: BorderRadius.circular(7)),
+            child: Center(
+              child: Text(
+                "Ajouter un groupe de Salarié",
+                style: TextStyle(color: Colors.white, fontFamily: 'normal'),
               ),
-            )
-          ],
+            ),
+          ),
         ),
-      ),
+      ],
     );
-  }
-
-  Widget BoxTache(
-      TextEditingController controller, GlobalKey key, String Statut_x) {
-    return Container(
-      decoration: BoxDecoration(
-          color: Colors.white, border: Border.all(color: Colors.black12)),
-      height: 40,
-      width: (MediaQuery.of(context).size.width * 15) / 16,
-      child: Row(
-        children: [
-          Container(
-            height: 40,
-            width: 400,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  height: 40,
-                  width: 350,
-                  child: TextFormField(
-                    maxLines: 1, // Limiter à une seule ligne
-                    scrollPhysics:
-                        ClampingScrollPhysics(), // Empêcher le défilement vertical
-                    scrollPadding: EdgeInsets
-                        .zero, // SuPermet au champ de se développer et de faire défiler le contenu
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                        fontFamily: 'normal',
-                        fontSize: 13,
-                        color: Colors.black),
-                    controller: controller,
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.only(bottom: 10, left: 20),
-                      hintText: "Cliquez pour ajouter une tâche",
-                      hintStyle: TextStyle(
-                          fontFamily: 'normal',
-                          fontSize: 13,
-                          color: Colors.black45),
-                      border: InputBorder.none,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer votre nom';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => StatefulBuilder(
-                        builder: (context, setState) => AlertDialog(
-                            content: Text(
-                          controller.text,
-                          style: TextStyle(
-                            fontFamily: 'normal',
-                          ),
-                        )),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black12)),
-                    height: 45,
-                    width: 45,
-                    child: Center(
-                      child: Icon(
-                        Icons.remove_red_eye_outlined,
-                        color: mainColor2,
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              setState(() {
-                _showMultiSelectMenu(0);
-              });
-            },
-            child: Container(
-              height: 40,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black12),
-              ),
-              width: 200,
-              child: Center(
-                  child: selectedOptions.isEmpty
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.add_circle_outline_sharp,
-                              color: mainColor2,
-                            ),
-                            w(20),
-                            CircleAvatar(
-                              backgroundColor: mainColor,
-                              child: Icon(
-                                Icons.person,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        )
-                      : Text(
-                          "d",
-                          style: TextStyle(fontFamily: 'normal', fontSize: 12),
-                        )),
-            ),
-          ),
-          Container(
-            height: 45,
-            width: 200,
-            child: TextFormField(
-              onTap: () {
-                _showDatePicker(1);
-              },
-              style: TextStyle(
-                  fontFamily: 'normal', fontSize: 13, color: Colors.black),
-              decoration: InputDecoration(
-                labelText: 'Date',
-                labelStyle: TextStyle(
-                    fontFamily: 'normal', fontSize: 14, color: Colors.black45),
-                border: InputBorder.none,
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.calendar_today),
-                  onPressed: () {
-                    _showDatePicker(1);
-                  },
-                ),
-              ),
-              readOnly: true,
-              controller: TextEditingController(
-                text: _selectedDate != null
-                    ? DateFormat('dd/MM/yyyy').format(_selectedDate[1])
-                    : '',
-              ),
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              final RenderBox container =
-                  key.currentContext?.findRenderObject() as RenderBox;
-              final Offset containerPosition =
-                  container.localToGlobal(Offset.zero);
-              final Size containerSize = container.size;
-              showMenu(
-                surfaceTintColor: Colors.white,
-                context: context,
-                position: RelativeRect.fromLTRB(
-                  containerPosition.dx,
-                  containerPosition.dy + containerSize.height,
-                  MediaQuery.of(context).size.width -
-                      containerPosition.dx -
-                      containerSize.width,
-                  0,
-                ),
-                items: [
-                  PopupMenuItem(
-                    onTap: () {
-                      setState(() {
-                        Statut_x = "Fait";
-                        print(Statut_x);
-                      });
-                    },
-                    child: Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: Colors.green),
-                        child: Center(
-                            child: Text(
-                          'Fait',
-                          style: TextStyle(
-                            fontFamily: 'normal',
-                            color: Colors.white,
-                          ),
-                        ))),
-                  ),
-                  PopupMenuItem(
-                    onTap: () {
-                      setState(() {
-                        Statut_x = "En Cours";
-                        print(Statut_x);
-                      });
-                    },
-                    child: Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: Colors.orange),
-                        child: Center(
-                            child: Text(
-                          'En Cours',
-                          style: TextStyle(
-                            fontFamily: 'normal',
-                            color: Colors.white,
-                          ),
-                        ))),
-                  ),
-                  PopupMenuItem(
-                    onTap: () {
-                      setState(() {
-                        Statut_x = "Bloqué";
-                        print(Statut_x);
-                      });
-                    },
-                    child: Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: Colors.red),
-                        child: Center(
-                            child: Text(
-                          'Bloqué',
-                          style: TextStyle(
-                            fontFamily: 'normal',
-                            color: Colors.white,
-                          ),
-                        ))),
-                  ),
-                  PopupMenuItem(
-                    onTap: () {
-                      setState(() {
-                        Statut_x = "Pas Commencé";
-                        print(Statut_x);
-                      });
-                    },
-                    child: Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: Colors.grey),
-                        child: Center(
-                            child: Text(
-                          'Pas Commencé',
-                          style: TextStyle(
-                            fontFamily: 'normal',
-                            color: Colors.white,
-                          ),
-                        ))),
-                  ),
-                ],
-                elevation: 8.0, // Adjust the elevation for the box shadow
-              );
-            },
-            child: Container(
-              key: key,
-              color: Statut_x == "Fait"
-                  ? Colors.green
-                  : Statut_x == "En Cours"
-                      ? Colors.orange
-                      : Statut_x == "Bloqué"
-                          ? Colors.red
-                          : Statut_x == "Pas Commencé"
-                              ? Color.fromARGB(106, 238, 15, 3)
-                              : Colors.white,
-              padding: EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
-              width: 200,
-              height: 35,
-              // key: _containerKey4,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    // Statut_x==""? "Cliquez pour choisir" : Statut_x=="Fait"?"Fait" : Statut_x=="En Cours"?"En Cours" : Statut_x=="Bloqué"?"Bloqué" :  ,
-                    Statut_x == "" ? "Cliquez pour choisir" : Statut_x,
-                    style: TextStyle(
-                        fontFamily: 'normal',
-                        fontSize: 13,
-                        color: Statut_x == ""
-                            ? const Color.fromARGB(154, 0, 0, 0)
-                            : Colors.white),
-                  ),
-                  Icon(
-                    Icons.arrow_drop_down_rounded,
-                    color: Color.fromARGB(154, 255, 255, 255),
-                  )
-                ],
-              ),
-            ),
-          ),
-          Container(
-            height: 40,
-            width: 200,
-            child: TextFormField(
-              maxLines: 1, // Limiter à une seule ligne
-              scrollPhysics:
-                  ClampingScrollPhysics(), // Empêcher le défilement vertical
-              scrollPadding: EdgeInsets
-                  .zero, // SuPermet au champ de se développer et de faire défiler le contenu
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                  fontFamily: 'normal', fontSize: 13, color: Colors.black),
-              //controller: tache1,
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.only(bottom: 10, left: 20),
-                hintText: "Cliquez pour ajouter une tâche",
-                hintStyle: TextStyle(
-                    fontFamily: 'normal', fontSize: 13, color: Colors.black45),
-                border: InputBorder.none,
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Veuillez entrer votre nom';
-                }
-                return null;
-              },
-            ),
-          ),
-          InkWell(
-            onTap: () {},
-            child: Expanded(
-              child: Container(
-                height: 40,
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black12),
-                    color: mainColor2),
-                width: 170,
-                child: Center(
-                  child: Text(
-                    "Envoyer Planning",
-                    style: TextStyle(
-                        fontFamily: 'normal',
-                        fontSize: 13,
-                        color: Color.fromARGB(255, 255, 255, 255)),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _addItem() {
-    setState(() {
-      _itemWid.add(BoxTache(tache1, _containerKey3, ""));
-      // _items.add('Item ${_items.length + 1}');
-    });
-  }
-
-  void _getSelectedOptionsText() {
-    for (int i = 0; i < _selectedOptions.length; i++) {
-      if (_selectedOptions[i]) {
-        selectedOptions.add(_options[i]);
-      }
-    }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 h(double h) {
@@ -12,6 +14,20 @@ w(double w) {
   );
 
 }
+
+String generateRandomCode() {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  final random = Random();
+  return String.fromCharCodes(
+    Iterable.generate(
+      6,
+      (_) => chars.codeUnitAt(
+        random.nextInt(chars.length),
+      ),
+    ),
+  );
+}
+
 Color txtDesc = const Color.fromARGB(166, 0, 0, 0);
 Color mainColor = Color.fromARGB(255, 7, 65, 173);
 Color mainColor__ = Color.fromARGB(16, 7, 65, 173);

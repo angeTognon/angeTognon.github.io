@@ -1,8 +1,13 @@
 // ignore_for_file: file_names, non_constant_identifier_names
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:zth_app/widgets/wid_var.dart';
+import 'package:http/http.dart' as http;
 
 class PlanningEmploye extends StatefulWidget {
   const PlanningEmploye({super.key});
@@ -24,6 +29,10 @@ class _PlanningEmployeState extends State<PlanningEmploye> {
   @override
   void initState() {
     super.initState();
+     Timer.periodic(Duration(seconds: 3), (timer) {
+    _fetchMenuItems();
+    print("ok");
+  });
     // Initialize the first TextEditingController
     for (var i = 0; i <= 20; i++) {
       _textControllers.add(TextEditingController());
@@ -91,6 +100,13 @@ class _PlanningEmployeState extends State<PlanningEmploye> {
     'Damien k.',
     'Olivia S.'
   ];
+  getSalary() async {
+    var url = "https://zoutechhub.com/pharmaRh/getSalaryNomPrenom.php";
+    var response = await http.get(Uri.parse(url));
+    var pub = await json.decode(response.body);
+    return pub;
+  }
+
   int _currentIndex = 0;
   List<List<String>> _selectedOptionsPerIndex = [];
 /* **************FIN***************** */
@@ -100,74 +116,119 @@ class _PlanningEmployeState extends State<PlanningEmploye> {
         ? List<bool>.generate(_options.length,
             (i) => _selectedOptionsPerIndex[index].contains(_options[i]))
         : List.generate(_options.length, (_) => false);
-
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          surfaceTintColor: Colors.white,
-          title: Text(
-            'Choisissez les personnes à qui\nvous souhaitez attribuer ces tâches',
-            style: TextStyle(fontFamily: 'normal', fontSize: 15),
-            textAlign: TextAlign.center,
-          ),
-          content: StatefulBuilder(
-            builder: (context, setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(_options.length, (index) {
-                  return CheckboxListTile(
-                    title: Row(
-                      children: [
-                        CircleAvatar(
-                          child: Center(
-                            child: Icon(Icons.person),
-                          ),
+        return StatefulBuilder(
+          builder: (context, setState) => AlertDialog(
+            surfaceTintColor: Colors.white,
+            title: Text(
+              'Choisissez les personnes à qui\nvous souhaitez attribuer ces tâches',
+              style: TextStyle(fontFamily: 'normal', fontSize: 15),
+              textAlign: TextAlign.center,
+            ),
+            content: Column(mainAxisSize: MainAxisSize.min, children: [
+              Container(
+                height: 150,
+                width: 300,
+                child: FutureBuilder(
+                    future: getSalary(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text(
+                              "Erreur de chargement. Veuillez relancer l'application"),
+                        );
+                      }
+                      if (snapshot.hasData) {
+                        return snapshot.data.isEmpty
+                            ? Column(
+                                children: [
+                                  h(20),
+                                  Icon(
+                                    Icons.safety_check_rounded,
+                                    size: 100,
+                                    color: mainColor,
+                                  ),
+                                  h(20),
+                                  Container(
+                                    margin:
+                                        EdgeInsets.only(left: 20, right: 20),
+                                    child: Text(
+                                      "Oups, Vous n'avez aucun employé pour l'instant ",
+                                      style: TextStyle(fontSize: 17),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : ListView.builder(
+                                itemCount: snapshot.data.length,
+                                itemBuilder: (context, index) {
+                                  return CheckboxListTile(
+                                    title: Row(
+                                      children: [
+                                        CircleAvatar(
+                                          child: Center(
+                                            child: Icon(Icons.person),
+                                          ),
+                                        ),
+                                        w(20),
+                                        Text(
+                                            "${snapshot.data[index]['prenom']} ${snapshot.data[index]['nom']}"),
+                                      ],
+                                    ),
+                                    value: _selectedOptions[index],
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedOptions[index] =
+                                            value ?? false;
+                                      });
+                                    },
+                                  );
+                                },
+                              );
+                      }
+                      return Center(
+                        child: Container(
+                          height: 150,
+                          width: 150,
+                          child: Lottie.asset("assets/images/anim.json"),
                         ),
-                        w(20),
-                        Text(_options[index]),
-                      ],
-                    ),
-                    value: _selectedOptions[index],
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedOptions[index] = value ?? false;
-                      });
-                    },
-                  );
-                }),
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  // Mettre à jour la liste _selectedOptionsPerIndex
-                  if (index < _selectedOptionsPerIndex.length) {
-                    _selectedOptionsPerIndex[index] = [
-                      for (int i = 0; i < _selectedOptions.length; i++)
-                        if (_selectedOptions[i]) _options[i],
-                    ];
-                  } else {
-                    _selectedOptionsPerIndex.add([
-                      for (int i = 0; i < _selectedOptions.length; i++)
-                        if (_selectedOptions[i]) _options[i],
-                    ]);
-                  }
-                  print('Selected :==> $_selectedOptionsPerIndex');
+                      );
+                    }),
+              )
+            ]),
+            actions: [
+              TextButton(
+                onPressed: () {
                   Navigator.of(context).pop();
-                });
-              },
-              child: Text('Save'),
-            ),
-          ],
+                },
+                child: Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    // Mettre à jour la liste _selectedOptionsPerIndex
+                    if (index < _selectedOptionsPerIndex.length) {
+                      _selectedOptionsPerIndex[index] = [
+                        for (int i = 0; i < _selectedOptions.length; i++)
+                          if (_selectedOptions[i]) _options[i],
+                      ];
+                    } else {
+                      _selectedOptionsPerIndex.add([
+                        for (int i = 0; i < _selectedOptions.length; i++)
+                          if (_selectedOptions[i]) _options[i],
+                      ]);
+                    }
+                    print('Selected :==> $_selectedOptionsPerIndex');
+                    Navigator.of(context).pop();
+                  });
+                },
+                child: Text('Save'),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -190,6 +251,27 @@ class _PlanningEmployeState extends State<PlanningEmploye> {
     });
   }
 
+  List<String> _menuItems = [];
+String _selectedOption = '';
+
+Future<void> _fetchMenuItems() async {
+  final response = await http.get(Uri.parse('https://zoutechhub.com/pharmaRh/getEquipe.php'));
+  if (response.statusCode == 200) {
+    final data = json.decode(response.body) as List<dynamic>;
+
+    final members = data.map((item) => "Groupe N° ${item['id']}").toList();
+    setState(() {
+      _menuItems = members;
+      print(_menuItems);
+    });
+  } else {
+    throw Exception('Failed to fetch menu items');
+  }
+}
+
+  int _selectedIndex = 0;
+  bool cbon=false;
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -198,321 +280,7 @@ class _PlanningEmployeState extends State<PlanningEmploye> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                InkWell(
-                  onTap: () {
-                    _addItem();
-                  },
-                  child: Container(
-                    padding: EdgeInsets.only(left: 10,right: 10),
-                    height: 35,
-                    decoration: BoxDecoration(
-                        color: mainColor,
-                        borderRadius: BorderRadius.circular(7)),
-                    child: Center(
-                      child: Text(
-                        "Ajouter une Tâche à un groupe de Salarié",
-                        style: TextStyle(
-                            color: Colors.white, fontFamily: 'normal'),
-                      ),
-                    ),
-                  ),
-                ),
-                w(40),
-                Container(
-                  padding: EdgeInsets.only(left: 30, bottom: 13),
-                  decoration: BoxDecoration(
-                      color: Color.fromARGB(73, 42, 116, 100),
-                      borderRadius: BorderRadius.circular(15)),
-                  height: 35,
-                  width: 300,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _searchController,
-                          onChanged: (value) {
-                            setState(() {
-                              _isSearching = value.isNotEmpty;
-                            });
-                          },
-                          style: TextStyle(
-                              fontFamily: 'normal',
-                              fontSize: 14,
-                              color: Colors.black54),
-                          decoration: InputDecoration(
-                            hintText: "Trier par personne",
-                            hintStyle:
-                                TextStyle(fontFamily: 'normal', fontSize: 14),
-                            border: InputBorder.none,
-                            suffixIcon: _isSearching
-                                ? IconButton(
-                                    icon: Icon(
-                                      Icons.clear,
-                                      color: Colors.white,
-                                    ),
-                                    onPressed: () {
-                                      _searchController.clear();
-                                      setState(() {
-                                        _isSearching = false;
-                                      });
-                                    },
-                                  )
-                                : null,
-                          ),
-                        ),
-                      ),
-                      if (_isSearching)
-                        IconButton(
-                          icon: Icon(Icons.search, color: Colors.white),
-                          onPressed: () {
-                            // Exécuter la recherche avec la valeur du champ de texte
-                            String searchQuery = _searchController.text;
-                            performSearch(searchQuery);
-                          },
-                        ),
-                    ],
-                  ),
-                ),
-                w(30),
-                InkWell(
-                  onTap: () {
-                    final RenderBox container = _containerKey3.currentContext
-                        ?.findRenderObject() as RenderBox;
-                    final Offset containerPosition =
-                        container.localToGlobal(Offset.zero);
-                    final Size containerSize = container.size;
-                    showMenu(
-                      surfaceTintColor: Colors.white,
-                      context: context,
-                      position: RelativeRect.fromLTRB(
-                        containerPosition.dx,
-                        containerPosition.dy + containerSize.height,
-                        MediaQuery.of(context).size.width -
-                            containerPosition.dx -
-                            containerSize.width,
-                        0,
-                      ),
-                      items: [
-                        PopupMenuItem(
-                          child: Text(
-                            "Aujourd'hui",
-                            style:
-                                TextStyle(fontFamily: 'normal', fontSize: 13),
-                          ),
-                          value: 2,
-                        ),
-                        PopupMenuItem(
-                          child: Text(
-                            'Demain',
-                            style:
-                                TextStyle(fontFamily: 'normal', fontSize: 13),
-                          ),
-                          value: 2,
-                        ),
-                        PopupMenuItem(
-                          child: Text(
-                            'Hier',
-                            style:
-                                TextStyle(fontFamily: 'normal', fontSize: 13),
-                          ),
-                          value: 2,
-                        ),
-                        PopupMenuItem(
-                          child: Text(
-                            'Cette Semaine',
-                            style:
-                                TextStyle(fontFamily: 'normal', fontSize: 13),
-                          ),
-                          value: 2,
-                        ),
-                        PopupMenuItem(
-                          child: Text(
-                            'La Semaine Dernière',
-                            style:
-                                TextStyle(fontFamily: 'normal', fontSize: 13),
-                          ),
-                          value: 2,
-                        ),
-                        PopupMenuItem(
-                          child: Text(
-                            'La semaine Prochaine',
-                            style:
-                                TextStyle(fontFamily: 'normal', fontSize: 13),
-                          ),
-                          value: 2,
-                        ),
-                        PopupMenuItem(
-                          child: Text(
-                            'Le mois-ci',
-                            style:
-                                TextStyle(fontFamily: 'normal', fontSize: 13),
-                          ),
-                          value: 2,
-                        ),
-                        PopupMenuItem(
-                          child: Text(
-                            'Le mois Prochain',
-                            style:
-                                TextStyle(fontFamily: 'normal', fontSize: 13),
-                          ),
-                          value: 2,
-                        ),
-                        PopupMenuItem(
-                          child: Text(
-                            'Le mois précédent',
-                            style:
-                                TextStyle(fontFamily: 'normal', fontSize: 13),
-                          ),
-                          value: 2,
-                        ),
-                      ],
-
-                      elevation: 8.0, // Adjust the elevation for the box shadow
-                    );
-                  },
-                  child: Container(
-                    padding:
-                        EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
-                    width: 210,
-                    height: 35,
-                    key: _containerKey3,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: Colors.black26)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Trier par Date",
-                          style: TextStyle(
-                              fontFamily: 'normal',
-                              fontSize: 13,
-                              color: const Color.fromARGB(154, 0, 0, 0)),
-                        ),
-                        Icon(
-                          Icons.arrow_drop_down_rounded,
-                          color: const Color.fromARGB(154, 0, 0, 0),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                w(20),
-                InkWell(
-                  onTap: () {
-                    final RenderBox container = _containerKey_add_statut
-                        .currentContext
-                        ?.findRenderObject() as RenderBox;
-                    final Offset containerPosition =
-                        container.localToGlobal(Offset.zero);
-                    final Size containerSize = container.size;
-                    showMenu(
-                      surfaceTintColor: Colors.white,
-                      context: context,
-                      position: RelativeRect.fromLTRB(
-                        containerPosition.dx,
-                        containerPosition.dy + containerSize.height,
-                        MediaQuery.of(context).size.width -
-                            containerPosition.dx -
-                            containerSize.width,
-                        0,
-                      ),
-                      items: [
-                        PopupMenuItem(
-                          child: Container(
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: Colors.green),
-                              child: Center(
-                                  child: Text(
-                                'Fait',
-                                style: TextStyle(
-                                  fontFamily: 'normal',
-                                  color: Colors.white,
-                                ),
-                              ))),
-                        ),
-                        PopupMenuItem(
-                          child: Container(
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: Colors.orange),
-                              child: Center(
-                                  child: Text(
-                                'En Cours',
-                                style: TextStyle(
-                                  fontFamily: 'normal',
-                                  color: Colors.white,
-                                ),
-                              ))),
-                        ),
-                        PopupMenuItem(
-                          child: Container(
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: Colors.red),
-                              child: Center(
-                                  child: Text(
-                                'Bloqué',
-                                style: TextStyle(
-                                  fontFamily: 'normal',
-                                  color: Colors.white,
-                                ),
-                              ))),
-                        ),
-                        PopupMenuItem(
-                          child: Container(
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: Colors.grey),
-                              child: Center(
-                                  child: Text(
-                                'Pas Commencé',
-                                style: TextStyle(
-                                  fontFamily: 'normal',
-                                  color: Colors.white,
-                                ),
-                              ))),
-                        ),
-                      ],
-                      elevation: 8.0, // Adjust the elevation for the box shadow
-                    );
-                  },
-                  child: Container(
-                    padding:
-                        EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
-                    width: 200,
-                    height: 35,
-                    key: _containerKey_add_statut,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: Colors.black26)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Trier par titre de Statut",
-                          style: TextStyle(
-                              fontFamily: 'normal',
-                              fontSize: 13,
-                              color: const Color.fromARGB(154, 0, 0, 0)),
-                        ),
-                        Icon(
-                          Icons.arrow_drop_down_rounded,
-                          color: const Color.fromARGB(154, 0, 0, 0),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            
             h(20),
             Container(
               decoration: BoxDecoration(
@@ -633,6 +401,7 @@ class _PlanningEmployeState extends State<PlanningEmploye> {
                     width: (MediaQuery.of(context).size.width * 15) / 16,
                     child: Row(
                       children: [
+                        //_showMultiSelectMenu(index);
                         Container(
                           height: 40,
                           width: 250,
@@ -657,8 +426,7 @@ class _PlanningEmployeState extends State<PlanningEmploye> {
                                   decoration: InputDecoration(
                                     contentPadding:
                                         EdgeInsets.only(bottom: 10, left: 20),
-                                    hintText:
-                                        "Cliquez pour ajouter une tâche",
+                                    hintText: "Cliquez pour ajouter une tâche",
                                     hintStyle: TextStyle(
                                         fontFamily: 'normal',
                                         fontSize: 13,
@@ -712,10 +480,18 @@ class _PlanningEmployeState extends State<PlanningEmploye> {
                             ],
                           ),
                         ),
-                        InkWell(
-                          onTap: () {
+                        PopupMenuButton(
+                          itemBuilder: (BuildContext context) => _menuItems
+                              .map((item) => PopupMenuItem<String>(
+                                    value: item,
+                                    child: Text(item),
+                                  ))
+                              .toList(),
+                          onSelected: (value) {
                             setState(() {
-                              _showMultiSelectMenu(index);
+                              _selectedIndex =
+                                  _menuItems.indexOf(value as String);
+                             cbon=true;
                             });
                           },
                           child: Container(
@@ -725,42 +501,32 @@ class _PlanningEmployeState extends State<PlanningEmploye> {
                             ),
                             width: 200,
                             child: Center(
-                              child:
-                                  _selectedOptionsPerIndex.length > index &&
-                                          _selectedOptionsPerIndex[index]
-                                              .isNotEmpty
-                                      ? Text(
-                                          "${_selectedOptionsPerIndex[index].join(' / ')}",
-                                          style: TextStyle(
-                                              fontFamily: 'normal',
-                                              fontSize: 12),
-                                        )
-                                      : Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.add_circle_outline_sharp,
-                                              color: mainColor2,
-                                            ),
-                                            w(20),
-                                            CircleAvatar(
-                                              backgroundColor: mainColor,
-                                              child: Icon(
-                                                Icons.person,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                              child: cbon? Text('${_menuItems[_selectedIndex]}'):
+                                  Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.add_circle_outline_sharp,
+                                    color: mainColor2,
+                                  ),
+                                  w(20),
+                                  CircleAvatar(
+                                    backgroundColor: mainColor,
+                                    child: Icon(
+                                      Icons.person,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                         Container(
                           height: 45,
                           width: 160,
-                          padding: EdgeInsets.only(
-                              left: 15, bottom: 15, right: 15),
+                          padding:
+                              EdgeInsets.only(left: 15, bottom: 2.5, right: 15),
                           child: TextFormField(
                             onTap: () {
                               _showDatePicker(index);
@@ -921,8 +687,7 @@ class _PlanningEmployeState extends State<PlanningEmploye> {
                             height: 35,
                             // key: _containerKey4,
                             child: Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   // Statuts[index]==""? "Cliquez pour choisir" : Statuts[index]=="Fait"?"Fait" : Statuts[index]=="En Cours"?"En Cours" : Statuts[index]=="Bloqué"?"Bloqué" :  ,
@@ -990,8 +755,7 @@ class _PlanningEmployeState extends State<PlanningEmploye> {
                                 style: TextStyle(
                                     fontFamily: 'normal',
                                     fontSize: 13,
-                                    color:
-                                        Color.fromARGB(255, 255, 255, 255)),
+                                    color: Color.fromARGB(255, 255, 255, 255)),
                               ),
                             ),
                           ),
@@ -1000,7 +764,7 @@ class _PlanningEmployeState extends State<PlanningEmploye> {
                     ),
                   );
                 },
-                 separatorBuilder: (BuildContext context, int index) {
+                separatorBuilder: (BuildContext context, int index) {
                   return Divider();
                 },
               ),
