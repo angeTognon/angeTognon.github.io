@@ -1,4 +1,711 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:zth_app/widgets/wid_var.dart';
+
+class Accueil extends StatefulWidget {
+  const Accueil({super.key});
+
+  @override
+  State<Accueil> createState() => _AccueilState();
+}
+
+class _AccueilState extends State<Accueil> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      width: (MediaQuery.of(context).size.width * 9.7) / 12,
+      color: const Color.fromARGB(255, 255, 255, 255),
+      padding: const EdgeInsets.all(20),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Heureux de vous revoir\nKoffi !",
+                  style: TextStyle(fontFamily: 'bold', fontSize: 18),
+                ),
+                Icon(
+                  Icons.notifications,
+                  color: mainColor,
+                  size: 40,
+                )
+              ],
+            ),
+            h(7),
+            const Divider(),
+            h(15),
+            Counters(),
+            h(20),
+            const Text(
+              "Apperçu des présences",
+              style: TextStyle(fontFamily: 'bold', fontSize: 18),
+            ),
+            h(20),
+            EnteteBoxPresence(context),
+            ContenuBoxPresence(context, "Marc ADIDJI", "marcadidji@gmail.com",
+                "#23454GH6J7YT6", "Développeur web", "07h38 le 01/10/2024"),
+            ContenuBoxPresence(context, "Marc ADIDJI", "marcadidji@gmail.com",
+                "#23454GH6J7YT6", "Développeur web", "07h38 le 01/10/2024"),
+            ContenuBoxPresence(context, "Marc ADIDJI", "marcadidji@gmail.com",
+                "#23454GH6J7YT6", "Développeur web", "07h38 le 01/10/2024"),
+            ContenuBoxPresence(context, "Marc ADIDJI", "marcadidji@gmail.com",
+                "#23454GH6J7YT6", "Développeur web", "07h38 le 01/10/2024"),
+            h(30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [BoxDemande(), EvenementAvenir()],
+            ),
+            h(20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  BoxDemande() {
+    return Expanded(
+      child: Card(
+        color: const Color.fromARGB(255, 245, 245, 245),
+        child: Container(
+          padding: const EdgeInsets.all(0),
+          height: 250,
+          width: 600,
+          child: Column(
+            children: [
+              Container(
+                width: 600,
+                padding: const EdgeInsets.all(10),
+                decoration:
+                    BoxDecoration(border: Border.all(color: Colors.black12)),
+                child: const Center(
+                  child: Text(
+                    "Demandes en attentes",
+                    style: TextStyle(fontFamily: 'bold', fontSize: 15),
+                  ),
+                ),
+              ),
+              Container(
+                  width: 600,
+                  padding: const EdgeInsets.all(10),
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.black12)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const SizedBox(
+                        width: 260,
+                        child: Text(
+                          "Employé",
+                          style: TextStyle(fontFamily: 'normal'),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 200,
+                        child: Text(
+                          "Objet",
+                          style: TextStyle(fontFamily: 'normal'),
+                        ),
+                      ),
+                      Expanded(
+                          child: Container(
+                        child: const Center(
+                          child: Text(
+                            "Action",
+                            style: TextStyle(fontFamily: 'normal'),
+                          ),
+                        ),
+                      ))
+                    ],
+                  )),
+              ContenuBoxDemande(
+                  "Marc ADIDJI", "marcadidji@gmail.com", "Demande de congé"),
+              ContenuBoxDemande("Christelle AZAN", "azanchristelle@gmail.com",
+                  "Demande de démission"),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  ContenuBoxDemande(String nom, email, objet) {
+    return Container(
+        width: 600,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+            color: Colors.white, border: Border.all(color: Colors.black12)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              width: 260,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const CircleAvatar(
+                    radius: 20,
+                    child: Icon(
+                      Icons.person,
+                      size: 20,
+                    ),
+                  ),
+                  w(10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        nom,
+                        style: const TextStyle(fontFamily: 'bold'),
+                      ),
+                      Text(
+                        email,
+                        style:
+                            const TextStyle(fontFamily: 'normal', fontSize: 13),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              width: 200,
+              child: Text(
+                objet,
+                style: const TextStyle(fontFamily: 'bold'),
+              ),
+            ),
+            Expanded(
+                child: Container(
+              child: const Center(
+                  child: Icon(
+                Icons.remove_red_eye,
+                color: Colors.green,
+              )),
+            ))
+          ],
+        ));
+  }
+
+  EnteteBoxPresence(
+    BuildContext context,
+  ) {
+    return Container(
+      height: 40,
+      width: MediaQuery.of(context).size.width,
+      decoration: const BoxDecoration(
+          color: Color.fromARGB(255, 230, 230, 230),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(25), topRight: Radius.circular(25))),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 350,
+            height: 40,
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  w(30),
+                  const Text(
+                    "Employés",
+                    style: TextStyle(fontFamily: 'normal'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 200,
+            height: 40,
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "ID Employé",
+                    style: TextStyle(fontFamily: 'normal'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 200,
+            height: 40,
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Poste",
+                    style: TextStyle(fontFamily: 'normal'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 200,
+            height: 40,
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Statut",
+                    style: TextStyle(fontFamily: 'normal'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 200,
+            height: 40,
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Heure de pointage",
+                    style: TextStyle(fontFamily: 'normal'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  ContenuBoxPresence(
+      BuildContext context, String name, email, id, poste, heure) {
+    return Container(
+      padding: const EdgeInsets.all(5),
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 255, 255, 255),
+        border: Border.all(color: Colors.black12),
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+              width: 350,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  w(20),
+                  const CircleAvatar(
+                    radius: 25,
+                    child: Icon(
+                      Icons.person,
+                      size: 25,
+                    ),
+                  ),
+                  w(10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(fontFamily: 'bold'),
+                      ),
+                      Text(
+                        email,
+                        style:
+                            const TextStyle(fontFamily: 'normal', fontSize: 13),
+                      )
+                    ],
+                  )
+                ],
+              )),
+          SizedBox(
+            width: 195,
+            height: 40,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 230, 230, 230),
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  child: Text(
+                    id,
+                    style: const TextStyle(fontFamily: 'normal'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+              width: 200,
+              height: 40,
+              child: Row(
+                children: [
+                  Text(
+                    poste,
+                    style: const TextStyle(fontFamily: 'normal'),
+                  )
+                ],
+              )),
+          SizedBox(
+            width: 200,
+            height: 40,
+            child: Center(
+              child: Row(
+                children: [
+                  Container(
+                    height: 25,
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: const Color(0xFFecfdf3)),
+                    child: Center(
+                      child: Row(
+                        children: [
+                          const CircleAvatar(
+                            radius: 5,
+                            backgroundColor: Colors.green,
+                          ),
+                          w(10),
+                          const Text(
+                            "A l'heure",
+                            style: TextStyle(
+                                color: Colors.green, fontFamily: 'bold'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 200,
+            height: 40,
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    heure,
+                    style: const TextStyle(fontFamily: 'bold'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Counters() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Card(
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft, colors: [mainColor, mainColor2])),
+            height: 150,
+            width: 250,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.white,
+                      minRadius: 35,
+                      child: Icon(
+                        Icons.person,
+                        color: mainColor,
+                        size: 40,
+                      ),
+                    ),
+                  ],
+                ),
+                h(2),
+                const Text(
+                  "Plaintes et Suggestions",
+                  style: TextStyle(color: Colors.white, fontFamily: 'normal'),
+                ),
+                const Text(
+                  "3",
+                  style: TextStyle(
+                      color: Colors.white, fontSize: 25, fontFamily: 'normal'),
+                )
+              ],
+            ),
+          ),
+        ),
+        Card(
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft, colors: [mainColor, Colors.red])),
+            height: 150,
+            width: 250,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.white,
+                      minRadius: 35,
+                      child: Icon(
+                        Icons.wallet,
+                        color: mainColor,
+                        size: 40,
+                      ),
+                    ),
+                  ],
+                ),
+                h(2),
+                const Text(
+                  "Fiches de Paie traité",
+                  style: TextStyle(color: Colors.white, fontFamily: 'normal'),
+                ),
+                const Text(
+                  "7",
+                  style: TextStyle(
+                      color: Colors.white, fontSize: 25, fontFamily: 'normal'),
+                )
+              ],
+            ),
+          ),
+        ),
+        Card(
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft, colors: [mainColor, mainColor2])),
+            height: 150,
+            width: 250,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.white,
+                      minRadius: 35,
+                      child: Icon(
+                        Icons.attach_money,
+                        color: mainColor,
+                        size: 40,
+                      ),
+                    ),
+                  ],
+                ),
+                h(2),
+                const Text(
+                  "Salaires traités",
+                  style: TextStyle(color: Colors.white, fontFamily: 'normal'),
+                ),
+                const Text(
+                  "37",
+                  style: TextStyle(
+                      color: Colors.white, fontSize: 25, fontFamily: 'normal'),
+                )
+              ],
+            ),
+          ),
+        ),
+        Card(
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    colors: [mainColor, Colors.yellow])),
+            height: 150,
+            width: 250,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.white,
+                      minRadius: 35,
+                      child: Icon(
+                        Icons.person,
+                        color: mainColor,
+                        size: 40,
+                      ),
+                    ),
+                  ],
+                ),
+                h(2),
+                const Text(
+                  "Contractualisation",
+                  style: TextStyle(color: Colors.white, fontFamily: 'normal'),
+                ),
+                const Text(
+                  "24",
+                  style: TextStyle(
+                      color: Colors.white, fontSize: 25, fontFamily: 'normal'),
+                )
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  EvenementAvenir() {
+    return Expanded(
+      child: Card(
+        color: const Color.fromARGB(255, 245, 245, 245),
+        child: Container(
+          height: 250,
+          padding: const EdgeInsets.all(0),
+          width: 600,
+          child: Column(
+            children: [
+              Container(
+                width: 600,
+                padding: const EdgeInsets.all(10),
+                decoration:
+                    BoxDecoration(border: Border.all(color: Colors.black12)),
+                child: const Center(
+                  child: Text(
+                    "Evènements à venir",
+                    style: TextStyle(fontFamily: 'bold', fontSize: 15),
+                  ),
+                ),
+              ),
+              h(24),
+              Wrap(
+                runSpacing: 5,
+                spacing: 30,
+                children: [
+                  Container(
+                    height: 160,
+                    width: 230,
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        h(10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Icon(
+                              Icons.cake,
+                              color: mainColor,
+                              size: 80,
+                            ),
+                            Text(
+                              "04/10/2024 ",
+                              style: TextStyle(
+                                  fontFamily: 'bold',
+                                  fontSize: 16,
+                                  color: mainColor),
+                            ),
+                          ],
+                        ),
+                        h(5),
+                        const Text(
+                          "Anniversaire de l'employé  ",
+                          style: TextStyle(fontFamily: 'normal', fontSize: 14),
+                        ),
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Marc ADIDJI ",
+                              style:
+                                  TextStyle(fontFamily: 'bold', fontSize: 17),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 160,
+                    width: 230,
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        h(10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Icon(
+                              Icons.workspace_premium,
+                              color: mainColor,
+                              size: 80,
+                            ),
+                            Text(
+                              "01/01/2025 ",
+                              style: TextStyle(
+                                  fontFamily: 'bold',
+                                  fontSize: 16,
+                                  color: mainColor),
+                            ),
+                          ],
+                        ),
+                        h(5),
+                        const Text(
+                          "Prime de Service  ",
+                          style: TextStyle(fontFamily: 'normal', fontSize: 14),
+                        ),
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Marc ADIDJI ",
+                              style:
+                                  TextStyle(fontFamily: 'bold', fontSize: 17),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/* import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:multi_circular_slider/multi_circular_slider.dart';
@@ -28,41 +735,7 @@ class _AccueilState extends State<Accueil> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                margin: const EdgeInsets.only(left: 0),
-                width: (MediaQuery.of(context).size.width * 15) / 16,
-                child: Row(
-                  children: [
-                    Container(
-                      height: 40,width: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        image: DecorationImage(image: AssetImage("assets/images/ange.jpg"),fit: BoxFit.cover)
-                      ),
-                    ),
-                   
-                    w(30),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Bonjour M. Koffi Ange",
-                          style: TextStyle(
-                              fontFamily: 'bold',
-                              fontSize: 18,
-                              color: Color.fromARGB(182, 0, 0, 0)),
-                        ),
-                        Text(
-                          "Bienvenue sur PharmaRH",
-                          style: TextStyle(
-                              fontFamily: 'normal', fontSize: 13, color: txtDesc),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+              h(20),
               Row(
                 children: [
                   Container(
@@ -82,14 +755,15 @@ class _AccueilState extends State<Accueil> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "Gestion des plaintes et suggestions",
                                     style: TextStyle(
                                         fontFamily: 'bold',
                                         fontSize: 14,
-                                        color: mainColor),
+                                        color: Colors.black),
                                   ),
                                   //Icon
                                   Container(
@@ -145,14 +819,15 @@ class _AccueilState extends State<Accueil> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "Traitement des Fiches de Paie",
                                     style: TextStyle(
-                                        fontFamily: 'bold',
-                                        fontSize: 14,
-                                        color: mainColor),
+                                      fontFamily: 'bold',
+                                      fontSize: 14,
+                                    ),
                                   ),
                                   //Icon
                                   Container(
@@ -173,7 +848,8 @@ class _AccueilState extends State<Accueil> {
                                 width: 320,
                                 child: Center(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       h(10),
                                       Container(
@@ -205,11 +881,13 @@ class _AccueilState extends State<Accueil> {
                                                           RelativeRect.fromLTRB(
                                                         containerPosition.dx,
                                                         containerPosition.dy +
-                                                            containerSize.height,
+                                                            containerSize
+                                                                .height,
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width -
-                                                            containerPosition.dx -
+                                                            containerPosition
+                                                                .dx -
                                                             containerSize.width,
                                                         0,
                                                       ),
@@ -220,7 +898,8 @@ class _AccueilState extends State<Accueil> {
                                                           value: 1,
                                                         ),
                                                         const PopupMenuItem(
-                                                          child: Text('Ce mois'),
+                                                          child:
+                                                              Text('Ce mois'),
                                                           value: 2,
                                                         ),
                                                         const PopupMenuItem(
@@ -240,11 +919,11 @@ class _AccueilState extends State<Accueil> {
                                                     key: _containerKey2,
                                                     decoration: BoxDecoration(
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                5),
+                                                            BorderRadius
+                                                                .circular(5),
                                                         border: Border.all(
-                                                            color:
-                                                                Colors.black26)),
+                                                            color: Colors
+                                                                .black26)),
                                                     child: const Row(
                                                       children: [
                                                         Text(
@@ -253,8 +932,8 @@ class _AccueilState extends State<Accueil> {
                                                               fontFamily:
                                                                   'normal',
                                                               fontSize: 12,
-                                                              color:
-                                                                  Colors.black38),
+                                                              color: Colors
+                                                                  .black38),
                                                         )
                                                       ],
                                                     ),
@@ -265,8 +944,8 @@ class _AccueilState extends State<Accueil> {
                                             h(40),
                                             const Text(
                                               "Rien pour L'instant",
-                                              style:
-                                                  TextStyle(fontFamily: 'normal'),
+                                              style: TextStyle(
+                                                  fontFamily: 'normal'),
                                             ),
                                             h(15),
                                           ],
@@ -293,14 +972,15 @@ class _AccueilState extends State<Accueil> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "Traitement des Salaire",
                                     style: TextStyle(
-                                        fontFamily: 'bold',
-                                        fontSize: 14,
-                                        color: mainColor),
+                                      fontFamily: 'bold',
+                                      fontSize: 14,
+                                    ),
                                   ),
                                   //Icon
                                   Container(
@@ -321,7 +1001,8 @@ class _AccueilState extends State<Accueil> {
                                 width: 320,
                                 child: Center(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       h(10),
                                       Container(
@@ -353,11 +1034,13 @@ class _AccueilState extends State<Accueil> {
                                                           RelativeRect.fromLTRB(
                                                         containerPosition.dx,
                                                         containerPosition.dy +
-                                                            containerSize.height,
+                                                            containerSize
+                                                                .height,
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width -
-                                                            containerPosition.dx -
+                                                            containerPosition
+                                                                .dx -
                                                             containerSize.width,
                                                         0,
                                                       ),
@@ -368,7 +1051,8 @@ class _AccueilState extends State<Accueil> {
                                                           value: 1,
                                                         ),
                                                         const PopupMenuItem(
-                                                          child: Text('Ce mois'),
+                                                          child:
+                                                              Text('Ce mois'),
                                                           value: 2,
                                                         ),
                                                         const PopupMenuItem(
@@ -388,11 +1072,11 @@ class _AccueilState extends State<Accueil> {
                                                     // key: _containerKey2,
                                                     decoration: BoxDecoration(
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                5),
+                                                            BorderRadius
+                                                                .circular(5),
                                                         border: Border.all(
-                                                            color:
-                                                                Colors.black26)),
+                                                            color: Colors
+                                                                .black26)),
                                                     child: const Row(
                                                       children: [
                                                         Text(
@@ -401,8 +1085,8 @@ class _AccueilState extends State<Accueil> {
                                                               fontFamily:
                                                                   'normal',
                                                               fontSize: 12,
-                                                              color:
-                                                                  Colors.black38),
+                                                              color: Colors
+                                                                  .black38),
                                                         )
                                                       ],
                                                     ),
@@ -413,8 +1097,8 @@ class _AccueilState extends State<Accueil> {
                                             h(40),
                                             const Text(
                                               "Rien pour L'instant",
-                                              style:
-                                                  TextStyle(fontFamily: 'normal'),
+                                              style: TextStyle(
+                                                  fontFamily: 'normal'),
                                             ),
                                             h(15),
                                           ],
@@ -430,7 +1114,7 @@ class _AccueilState extends State<Accueil> {
                       ],
                     ),
                   ),
-          
+
                   /* **********************************2eme Colonne************************************** */
                   Container(
                     width: (MediaQuery.of(context).size.width * 4.5) / 16,
@@ -443,19 +1127,20 @@ class _AccueilState extends State<Accueil> {
                                   color: const Color.fromARGB(75, 0, 0, 0)),
                               borderRadius: BorderRadius.circular(20)),
                           padding: const EdgeInsets.all(15),
-                          width: 400,
+                          width: 350,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "Gestion des Présences",
                                     style: TextStyle(
-                                        fontFamily: 'bold',
-                                        fontSize: 14,
-                                        color: mainColor),
+                                      fontFamily: 'bold',
+                                      fontSize: 14,
+                                    ),
                                   ),
                                   //Icon
                                   Container(
@@ -467,25 +1152,27 @@ class _AccueilState extends State<Accueil> {
                               ),
                               h(10),
                               Divider(),
+                              h(60),
                               Container(
-                                height: 200,
-                                margin: EdgeInsets.all(50),
+                                height: 150,
+                                margin: EdgeInsets.only(left: 50, right: 50),
                                 child: MultiCircularSlider(
-                                  size: 260,
+                                  size: 240,
                                   showTotalPercentage: true,
                                   progressBarType:
                                       MultiCircularSliderType.circular,
-                                  values: [0.7, 0.1, 0.2],
+                                  values: [0.5, 0.1, 0.4],
                                   colors: [
                                     mainColor,
-                                    Color.fromARGB(255, 238, 255, 0),
-                                    Color.fromARGB(255, 252, 0, 8),
+                                    Color.fromARGB(255, 251, 157, 26),
+                                    Color.fromARGB(255, 139, 30, 30),
                                   ],
                                 ),
                               ),
                               Divider(),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -506,8 +1193,8 @@ class _AccueilState extends State<Accueil> {
                                     children: [
                                       CircleAvatar(
                                           minRadius: 10,
-                                          backgroundColor:
-                                              Color.fromARGB(255, 238, 255, 0)),
+                                          backgroundColor: Color.fromARGB(
+                                              255, 251, 157, 26)),
                                       w(20),
                                       Text(
                                         "1 En Congés",
@@ -524,7 +1211,7 @@ class _AccueilState extends State<Accueil> {
                                   CircleAvatar(
                                       minRadius: 10,
                                       backgroundColor:
-                                          Color.fromARGB(255, 252, 0, 8)),
+                                          Color.fromARGB(255, 139, 30, 30)),
                                   w(20),
                                   Text(
                                     "2 Absent ",
@@ -543,20 +1230,21 @@ class _AccueilState extends State<Accueil> {
                                   color: const Color.fromARGB(75, 0, 0, 0)),
                               borderRadius: BorderRadius.circular(20)),
                           padding: const EdgeInsets.all(15),
-                          width: 320,
-                          height: 220,
+                          width: 350,
+                          height: 260,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "Informations Présences",
                                     style: TextStyle(
-                                        fontFamily: 'bold',
-                                        fontSize: 14,
-                                        color: mainColor),
+                                      fontFamily: 'bold',
+                                      fontSize: 14,
+                                    ),
                                   ),
                                   //Icon
                                   Container(
@@ -689,11 +1377,12 @@ class _AccueilState extends State<Accueil> {
                             ],
                           ),
                         ),
+                        h(45)
                       ],
                     ),
                   ),
                   /* *********************************3eme*************************************************** */
-          
+
                   Container(
                     width: (MediaQuery.of(context).size.width * 5) / 16,
                     child: Column(
@@ -711,14 +1400,15 @@ class _AccueilState extends State<Accueil> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "Demandes en Attente",
                                     style: TextStyle(
-                                        fontFamily: 'bold',
-                                        fontSize: 14,
-                                        color: mainColor),
+                                      fontFamily: 'bold',
+                                      fontSize: 14,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -800,14 +1490,15 @@ class _AccueilState extends State<Accueil> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "Contractualisation ",
                                     style: TextStyle(
-                                        fontFamily: 'bold',
-                                        fontSize: 14,
-                                        color: mainColor),
+                                      fontFamily: 'bold',
+                                      fontSize: 14,
+                                    ),
                                   ),
                                   //Icon
                                   Container(
@@ -828,7 +1519,8 @@ class _AccueilState extends State<Accueil> {
                                 width: 320,
                                 child: Center(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       h(10),
                                       Container(
@@ -837,8 +1529,8 @@ class _AccueilState extends State<Accueil> {
                                           children: [
                                             const Text(
                                               "Rien pour L'instant",
-                                              style:
-                                                  TextStyle(fontFamily: 'normal'),
+                                              style: TextStyle(
+                                                  fontFamily: 'normal'),
                                             ),
                                             h(8),
                                           ],
@@ -865,7 +1557,8 @@ class _AccueilState extends State<Accueil> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "Notification ",
@@ -895,7 +1588,8 @@ class _AccueilState extends State<Accueil> {
                                 width: 320,
                                 child: Center(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       h(10),
                                       Container(
@@ -911,8 +1605,8 @@ class _AccueilState extends State<Accueil> {
                                             h(10),
                                             const Text(
                                               "Aucune notification pour l'instant",
-                                              style:
-                                                  TextStyle(fontFamily: 'normal'),
+                                              style: TextStyle(
+                                                  fontFamily: 'normal'),
                                             ),
                                             h(8),
                                           ],
@@ -930,8 +1624,7 @@ class _AccueilState extends State<Accueil> {
                   ),
                 ],
               ),
-           
-           h(100),
+              h(100),
             ],
           ),
         ),
@@ -939,3 +1632,4 @@ class _AccueilState extends State<Accueil> {
     );
   }
 }
+ */

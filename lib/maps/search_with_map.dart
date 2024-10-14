@@ -3,6 +3,8 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:math';
 
 class LocationPage extends StatefulWidget {
+  const LocationPage({super.key});
+
   @override
   _LocationPageState createState() => _LocationPageState();
 }
@@ -12,7 +14,7 @@ class _LocationPageState extends State<LocationPage> {
   double targetLatitude = 9.35798;
   double targetLongitude = 2.63429;
   double radius = 10.0; // 10 mètres
-  bool dansEntreprise=false;
+  bool dansEntreprise = false;
 
   @override
   void initState() {
@@ -36,15 +38,13 @@ class _LocationPageState extends State<LocationPage> {
     if (_isWithinRadius(position.latitude, position.longitude)) {
       print('L\'utilisateur est dans le rayon de 10 mètres');
       setState(() {
-        dansEntreprise=true;
+        dansEntreprise = true;
       });
-      
-
     } else {
       setState(() {
-        dansEntreprise=false;
+        dansEntreprise = false;
       });
-      
+
       print('L\'utilisateur est en dehors du rayon de 10 mètres');
     }
   }
@@ -68,16 +68,27 @@ class _LocationPageState extends State<LocationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User'),
+        title: const Text('User'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-      dansEntreprise? Text("C'est bon. Vous êtes dans l'entreprise",style: TextStyle(fontFamily: 'bold',fontSize: 20),) : Text("T'es un Menteur",style: TextStyle(fontFamily: 'bold',fontSize: 20),),
-
-            _currentPosition != null? Text('Latitude: ${_currentPosition!.latitude}'):Text("0"),
-            _currentPosition != null ? Text('Longitude: ${_currentPosition!.longitude}'):Text("0"),
+            dansEntreprise
+                ? const Text(
+                    "C'est bon. Vous êtes dans l'entreprise",
+                    style: TextStyle(fontFamily: 'bold', fontSize: 20),
+                  )
+                : const Text(
+                    "T'es un Menteur",
+                    style: TextStyle(fontFamily: 'bold', fontSize: 20),
+                  ),
+            _currentPosition != null
+                ? Text('Latitude: ${_currentPosition!.latitude}')
+                : const Text("0"),
+            _currentPosition != null
+                ? Text('Longitude: ${_currentPosition!.longitude}')
+                : const Text("0"),
           ],
         ),
       ),

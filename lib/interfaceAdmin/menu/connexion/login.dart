@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zth_app/interfaceAdmin/home.dart';
 import 'package:zth_app/interfaceAdmin/menu/inscription/inscription.dart';
+import 'package:zth_app/interfaceEmploy%C3%A9/home_employe.dart';
 import 'package:zth_app/main.dart';
 import 'package:zth_app/widgets/wid_var.dart';
 import 'package:typewritertext/typewritertext.dart';
@@ -59,8 +61,10 @@ class _LoginState extends State<Login> {
     //print("coucou");
 
     var url = "https://zoutechhub.com/pharmaRh/connexion.php";
-    var response = await http.post(Uri.parse(url),
-        body: {'email': _emailOrPhoneController.text, 'mp': _passwordController.text});
+    var response = await http.post(Uri.parse(url), body: {
+      'email': _emailOrPhoneController.text,
+      'mp': _passwordController.text
+    });
 
     //print('Response status: ${response.statusCode}');
     //print('Response body: ${response.body}');
@@ -76,7 +80,8 @@ class _LoginState extends State<Login> {
       eya = true;
       prefs.setBool('isConnected', eya);
 
-      user_email = _emailOrPhoneController.text;//******************************************/
+      user_email = _emailOrPhoneController
+          .text; //******************************************/
 
       final userPref = await SharedPreferences.getInstance();
 
@@ -85,7 +90,7 @@ class _LoginState extends State<Login> {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => Home(),
+            builder: (context) => const Home(),
           ),
           (route) => false);
     } else {
@@ -95,15 +100,84 @@ class _LoginState extends State<Login> {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text("Attention"),
-          content: Text(
+          title: const Text("Attention"),
+          content: const Text(
               "L'email ou le mot de passe n'existe pas ! Veuillez réessayer"),
           actions: <Widget>[
             ElevatedButton(
                 onPressed: () {
                   Navigator.pop(ctx);
                 },
-                child: Text("Ok"))
+                child: const Text("Ok"))
+          ],
+        ),
+      );
+    }
+  }
+
+  loginSalarie() async {
+    setState(() {
+      show = true;
+    });
+    //print("coucou");
+
+    var url = "https://zoutechhub.com/pharmaRh/connexionSalary.php";
+    var response = await http.post(Uri.parse(url), body: {
+      'email': _emailOrPhoneController.text,
+      'mp': _passwordController.text
+    });
+
+    //print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
+
+    var data = json.decode(response.body);
+    //print(data);
+    if (data == "Success") {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        backgroundColor: Color.fromARGB(255, 3, 78, 5),
+        content: Text("Connexion Réussie"),
+      ));
+      final prefs = await SharedPreferences.getInstance();
+      eyaEmploye = true;
+      prefs.setBool('isConnected2', eyaEmploye);
+
+      user_email = _emailOrPhoneController
+          .text; //******************************************/
+
+      final userPref = await SharedPreferences.getInstance();
+
+      userPref.setString('email', _emailOrPhoneController.text);
+      show = false;
+      if (_emailOrPhoneController.text == "tognange@gmail.com") {
+        eya = true;
+      } else {
+        eyaEmploye;
+      }
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                _emailOrPhoneController.text == "tognange@gmail.com"
+                    ? const Home()
+                    : const HomeEmploye(),
+          ),
+          (route) => false);
+    } else {
+      setState(() {
+        show = false;
+      });
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text("Attention"),
+          content: const Text(
+              "L'email ou le mot de passe n'existe pas ! Veuillez réessayer"),
+          actions: <Widget>[
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                },
+                child: const Text("Ok"))
           ],
         ),
       );
@@ -114,7 +188,7 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: mainColor2__,
+        color: mainColor,
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         child: Column(
@@ -125,48 +199,63 @@ class _LoginState extends State<Login> {
                 Container(
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width / 2,
-                  padding: EdgeInsets.all(50),
+                  padding: const EdgeInsets.all(50),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      h(130),
-                      Text(
-                        "PharmaRH",
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 38, 205, 0),
-                            fontFamily: 'bold',
-                            fontSize: 60),
+                      h(20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "PharmaRH",
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                fontFamily: 'bold',
+                                fontSize: 80),
+                          ),
+                          SizedBox(
+                              height: 100,
+                              width: 100,
+                              child: Image.asset("assets/images/pharmacie.png"))
+                        ],
                       ),
                       h(20),
-                      Text(
-                        "Gérez votre équipe avec soin,\ncomme vos médicaments.",
+                      const Text(
+                        "Gérez votre équipe avec soin, comme vos médicaments.",
                         style: TextStyle(
                             color: Colors.white,
-                            fontFamily: 'bold',
-                            fontSize: 25),
+                            fontFamily: 'normal',
+                            fontSize: 17),
                       ),
+                      SizedBox(
+                          height: 350,
+                          width: 350,
+                          child: Lottie.asset("assets/images/doc2.json")),
                       h(50),
-                      Container(
+                      SizedBox(
                           width: MediaQuery.of(context).size.width / 2.2,
-                          child: Text(
+                          child: const Text(
                             "Pharma HR est la solution de gestion des ressources humaines conçue sur-mesure pour les pharmacies. Gérez efficacement les fiches de paie, les congés, les formations et bien plus encore, le tout dans une interface intuitive. Restez concentré sur vos patients, laissez Pharma HR s'occuper de vos employés",
                             style: TextStyle(
                                 color: Colors.white,
                                 fontFamily: 'normal',
-                                fontSize: 18),
+                                fontSize: 16),
+                            textAlign: TextAlign.center,
                           ))
                     ],
                   ),
                   // child : Image.asset("assets/images/login.jpg")
                 ),
                 Container(
-                  padding:
-                      EdgeInsets.only(left: 40, right: 40, bottom: 0, top: 0),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(40),
-                          bottomLeft: Radius.circular(40))),
+                  padding: const EdgeInsets.only(
+                      left: 40, right: 40, bottom: 0, top: 0),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    /* borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          bottomLeft: Radius.circular(20)) */
+                  ),
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width / 2,
                   child: Form(
@@ -175,50 +264,52 @@ class _LoginState extends State<Login> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Container(
+                        /* Container(
                             height: 400,
                             width: 400,
-                            child: Lottie.asset("assets/images/doc.json")),
+                            child: Lottie.asset("assets/images/doc2.json")), */
                         Container(
-                          child: Text(
-                            'Connectez-vous à votre Compte',
+                          child: const Text(
+                            'Authentification à la Plateforme',
                             style: TextStyle(
-                              fontSize: 17,
+                              fontSize: 22,
                               fontFamily: 'bold',
                             ),
                             textAlign: TextAlign.center,
                           ),
                         ),
-                        SizedBox(height: 10.0),
+                        h(40),
+                        const SizedBox(height: 10.0),
                         Container(
                           child: TextFormField(
                             controller: _emailOrPhoneController,
+                            keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
                               labelText: 'Votre Adresse Email',
-                              contentPadding: EdgeInsets.symmetric(
+                              contentPadding: const EdgeInsets.symmetric(
                                   vertical: 12.0, horizontal: 16.0),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12.0),
                               ),
-                              labelStyle: TextStyle(
+                              labelStyle: const TextStyle(
                                   fontSize: 13,
                                   fontFamily: 'bold',
                                   color: Color(0xCD000000)),
                             ),
                           ),
                         ),
-                        SizedBox(height: 16.0),
+                        const SizedBox(height: 20),
                         TextFormField(
                           controller: _passwordController,
                           obscureText: !_isPasswordVisible,
                           decoration: InputDecoration(
                             labelText: 'Mot de passe',
-                            contentPadding: EdgeInsets.symmetric(
+                            contentPadding: const EdgeInsets.symmetric(
                                 vertical: 12.0, horizontal: 16.0),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.0),
                             ),
-                            labelStyle: TextStyle(
+                            labelStyle: const TextStyle(
                                 fontSize: 13,
                                 fontFamily: 'bold',
                                 color: Color(0xCD000000)),
@@ -238,14 +329,24 @@ class _LoginState extends State<Login> {
                               },
                             ),
                           ),
+                          onFieldSubmitted: (value) {
+                            _emailOrPhoneController.text == "admin@gmail.com"
+                                ? login()
+                                : loginSalarie();
+                          },
+                          onSaved: (newValue) {
+                            _emailOrPhoneController.text == "admin@gmail.com"
+                                ? login()
+                                : loginSalarie();
+                          },
                         ),
-                        SizedBox(height: 10.0),
+                        const SizedBox(height: 25.0),
                         show
                             ? Center(
-                                child: Container(
+                                child: SizedBox(
                                     height: 60,
                                     width: 60,
-                                    child: CircularProgressIndicator()))
+                                    child: const CircularProgressIndicator()))
                             : Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 16.0),
@@ -253,17 +354,18 @@ class _LoginState extends State<Login> {
                                   cursor: SystemMouseCursors.click,
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      login();
-                                      /*  if (_emailOrPhoneController
-                                              .text.isEmpty ||
-                                          _passwordController.text.isEmpty) {
-                                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                          backgroundColor: const Color.fromARGB(255, 135, 28, 20),
-                                          content: Text("Veuillez remplir tous les champs",style: TextStyle(fontFamily: 'normal'),)));
-                                      } else {
-                                        login();
-                                      } */
+                                      _emailOrPhoneController.text ==
+                                              "admin@gmail.com"
+                                          ? login()
+                                          : loginSalarie();
                                     },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: mainColor,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                      ),
+                                    ),
                                     child: Padding(
                                       padding:
                                           EdgeInsets.symmetric(vertical: 12.0),
@@ -275,17 +377,10 @@ class _LoginState extends State<Login> {
                                             color: Colors.white),
                                       ),
                                     ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: mainColor,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                      ),
-                                    ),
                                   ),
                                 ),
                               ),
-                        SizedBox(height: 16.0),
+                        const SizedBox(height: 25.0),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: TextButton(
@@ -293,7 +388,7 @@ class _LoginState extends State<Login> {
                               Navigator.of(context)
                                   .pushNamed('/forgot-password');
                             },
-                            child: Text(
+                            child: const Text(
                               'Mot de passe oublié?',
                               style: TextStyle(
                                   fontFamily: 'regular',
@@ -302,7 +397,7 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                         ),
-                        TextButton(
+                        /* TextButton(
                           onPressed: () {
                             Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => Inscription(),
@@ -315,7 +410,7 @@ class _LoginState extends State<Login> {
                                 color: Colors.black,
                                 fontSize: 15),
                           ),
-                        ),
+                        ), */
                       ],
                     ),
                   ),

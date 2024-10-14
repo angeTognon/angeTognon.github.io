@@ -1,10 +1,14 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:zth_app/widgets/wid_var.dart';
+import 'package:http/http.dart' as http;
 
 class GestionPretAvancement extends StatefulWidget {
   const GestionPretAvancement({super.key});
@@ -21,6 +25,14 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
   int count = 0;
 
   DateTime _selectedDate = DateTime.now();
+
+  getPretAvancement() async {
+    var url = "https://zoutechhub.com/pharmaRh/getPretAvancement.php";
+    var response = await http.get(Uri.parse(url));
+    var pub = await json.decode(response.body);
+    return pub;
+  }
+
   void _showDatePicker() {
     showDatePicker(
       context: context,
@@ -66,7 +78,8 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
+        height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         child: Column(
           children: [
@@ -77,15 +90,13 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
                   color: mainColor3, borderRadius: BorderRadius.circular(10)),
               child: Row(
                 children: [
-                  Container(
+                  SizedBox(
                     width: 180,
                     height: 50,
                     child: Center(
                       child: Text(
                         "Nom et Prénoms",
-                        style: TextStyle(
-                            fontFamily: 'bold',
-                            fontSize: 13),
+                        style: TextStyle(fontFamily: 'bold', fontSize: 13),
                       ),
                     ),
                   ),
@@ -94,16 +105,13 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
                     width: 3,
                     color: Colors.white54,
                   ),
-                  Container(
+                  SizedBox(
                     width: 120,
                     height: 50,
                     child: Center(
-                      child: Text(
-                        "Salaire\nde base",
-                        style: TextStyle(
-                            fontFamily: 'bold',
-                            fontSize: 13),textAlign: TextAlign.center
-                      ),
+                      child: Text("Salaire\nde base",
+                          style: TextStyle(fontFamily: 'bold', fontSize: 13),
+                          textAlign: TextAlign.center),
                     ),
                   ),
                   Container(
@@ -111,16 +119,13 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
                     width: 3,
                     color: Colors.white54,
                   ),
-                  Container(
+                  SizedBox(
                     width: 120,
                     height: 50,
                     child: Center(
-                      child: Text(
-                        "Salaire\nBrute",
-                        style: TextStyle(
-                            fontFamily: 'bold',
-                            fontSize: 13),textAlign: TextAlign.center
-                      ),
+                      child: Text("Salaire\nBrute",
+                          style: TextStyle(fontFamily: 'bold', fontSize: 13),
+                          textAlign: TextAlign.center),
                     ),
                   ),
                   Container(
@@ -128,103 +133,14 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
                     width: 3,
                     color: Colors.white54,
                   ),
-                  Container(
+                  SizedBox(
                     width: 120,
                     height: 50,
                     child: Center(
                       child: Text(
                         "Salaire\nNette",
-                        style: TextStyle(
-                            fontFamily: 'bold',
-                            fontSize: 13),textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 50,
-                    width: 3,
-                    color: Colors.white54,
-                  ),
-                  Container(
-                    width: 150,
-                    height: 50,
-                    child: Center(
-                      child: Text(
-                        "Prêts Effectués",
-                        style: TextStyle(
-                            fontFamily: 'bold',
-                            fontSize: 13),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 50,
-                    width: 3,
-                    color: Colors.white54,
-                  ),
-                  Container(
-                    width: 150,
-                    height: 50,
-                    child: Center(
-                      child: Text(
-                        "Avancements\nOctroyés",
-                        style: TextStyle(
-                            fontFamily: 'bold',
-                            fontSize: 13),textAlign: TextAlign.center
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 50,
-                    width: 3,
-                    color: Colors.white54,
-                  ),
-                  Container(
-                    width: 100,
-                    height: 50,
-                    child: Center(
-                      child: Text(
+                        style: TextStyle(fontFamily: 'bold', fontSize: 13),
                         textAlign: TextAlign.center,
-                        "Date d'échance",
-                        style: TextStyle(
-                            fontFamily: 'bold',
-                            fontSize: 13),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 50,
-                    width: 3,
-                    color: Colors.white54,
-                  ),
-                  Container(
-                    width: 100,
-                    height: 50,
-                    child: Center(
-                      child: Text(
-                        textAlign: TextAlign.center,
-                        "Période de Paiement",
-                        style: TextStyle(
-                            fontFamily: 'bold',
-                            fontSize: 13),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 50,
-                    width: 3,
-                    color: Colors.white54,
-                  ),
-                  Container(
-                    width: 100,
-                    height: 50,
-                    child: Center(
-                      child: Text(
-                        textAlign: TextAlign.center,
-                        "Montant à prélever",
-                        style: TextStyle(
-                            fontFamily: 'bold',
-                            fontSize: 13),
                       ),
                     ),
                   ),
@@ -234,16 +150,62 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
                     color: Colors.white54,
                   ),
                   Expanded(
-                    child: Container(
-                      width: 200,
+                    child: SizedBox(
+                      width: 150,
                       height: 50,
                       child: Center(
                         child: Text(
-                          "Action",
-                          style: TextStyle(
-                              fontFamily: 'bold',
-                              fontSize: 13),
+                          "Prêts/Avancements",
+                          style: TextStyle(fontFamily: 'bold', fontSize: 13),
                         ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: 50,
+                    width: 3,
+                    color: Colors.white54,
+                  ),
+                  SizedBox(
+                    width: 100,
+                    height: 50,
+                    child: Center(
+                      child: Text(
+                        textAlign: TextAlign.center,
+                        "Date d'échance",
+                        style: TextStyle(fontFamily: 'bold', fontSize: 13),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: 50,
+                    width: 3,
+                    color: Colors.white54,
+                  ),
+                  SizedBox(
+                    width: 100,
+                    height: 50,
+                    child: Center(
+                      child: Text(
+                        textAlign: TextAlign.center,
+                        "Période de Paiement",
+                        style: TextStyle(fontFamily: 'bold', fontSize: 13),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: 50,
+                    width: 3,
+                    color: Colors.white54,
+                  ),
+                  SizedBox(
+                    width: 100,
+                    height: 50,
+                    child: Center(
+                      child: Text(
+                        textAlign: TextAlign.center,
+                        "Montant à prélever",
+                        style: TextStyle(fontFamily: 'bold', fontSize: 13),
                       ),
                     ),
                   ),
@@ -251,56 +213,88 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
               ),
             ),
             h(5),
-            BoxUser(
-                "Aïcha TRAORÉ",
-                120000,
-                70000,
-                "30.000 FCA le 10/07/2024",
-                "Aucun avancement pour l'instant",
-                _containerKey,
-                "10/10/2024",
-                "3 mois",
-                "12500 FCFA"),
-            Divider(),
-            h(5),
-            BoxUser(
-                "Christian ZOGBO",
-                250000,
-                250000,
-                "Aucun Prêt pour l'instant",
-                "Aucun avancement pour l'instant",
-                _containerKey2,
-                "-",
-                "-",
-                "-"),
-            Divider(),
+            SizedBox(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: FutureBuilder(
+                future: getPretAvancement(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                          "Erreur de chargement. Veuillez relancer l'application"),
+                    );
+                  }
+                  if (snapshot.hasData) {
+                    return snapshot.data.isEmpty
+                        ? Column(
+                            children: [
+                              h(20),
+                              Icon(
+                                Icons.safety_check_rounded,
+                                size: 100,
+                                color: mainColor,
+                              ),
+                              h(20),
+                              Container(
+                                margin: EdgeInsets.only(left: 20, right: 20),
+                                child: Text(
+                                  "Oups, Vous n'avez aucun employé pour l'instant ",
+                                  style: TextStyle(fontSize: 17),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ],
+                          )
+                        : ListView.builder(
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (context, index) {
+                              //${snapshot.data[index]['salaireBase']}
+                              return BoxUser(
+                                "${snapshot.data[index]['nomPrenom']}",
+                                "${snapshot.data[index]['salaireBase']}",
+                                "${snapshot.data[index]['salaireBrute']}",
+                                "${snapshot.data[index]['salaireNette']}",
+                                "${snapshot.data[index]['pret']}",
+                                "${snapshot.data[index]['dateAvance']}",
+                                "${snapshot.data[index]['dateEcheance']}",
+                                "${snapshot.data[index]['periodePaiement']}",
+                                "${snapshot.data[index]['montantAPrelever']} FCFA",
+                              );
+                            },
+                          );
+                  }
+                  return Center(
+                    child: SizedBox(
+                      height: 150,
+                      width: 150,
+                      child: Lottie.asset("assets/images/anim.json"),
+                    ),
+                  );
+                },
+              ),
+            ),
           ],
         ));
   }
 
-  BoxUser(
-      String nomprenom,
-      double salaireBasic,
-      salaireActu,
-      String pret,
-      avancement,
-      GlobalKey key,
-      String echeance,
-      periodePaiement,
-      montant_a_prelever) {
+  BoxUser(String nomprenom, salaireBasic, salaireActu, salaireActu2, pret,
+      dateAvance, echeance, periodePaiement, montantAPrelever) {
     return Container(
       height: 50,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
       child: Row(
         children: [
-          Container(
+          SizedBox(
             width: 180,
             height: 50,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(width: 40,              child: CircleAvatar(
+                SizedBox(
+                  width: 40,
+                  child: CircleAvatar(
                     backgroundColor: mainColor3,
                     child: Icon(
                       Icons.person,
@@ -309,9 +303,11 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
                   ),
                 ),
                 w(20),
-                Row(mainAxisAlignment: MainAxisAlignment.start,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Container(width: 120,
+                    SizedBox(
+                      width: 120,
                       child: Text(
                         nomprenom,
                         style: TextStyle(
@@ -330,23 +326,7 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
             width: 3,
             color: Color.fromARGB(19, 0, 0, 0),
           ),
-          Container(
-            width: 120,
-            height: 50,
-            child: Center(
-              child: Text(
-                '$salaireBasic FCFA',
-                style: TextStyle(
-                    fontFamily: 'normal', color: Colors.black, fontSize: 13),
-              ),
-            ),
-          ),
-           Container(
-            height: 50,
-            width: 3,
-            color: Color.fromARGB(19, 0, 0, 0),
-          ),
-          Container(
+          SizedBox(
             width: 120,
             height: 50,
             child: Center(
@@ -362,7 +342,23 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
             width: 3,
             color: Color.fromARGB(19, 0, 0, 0),
           ),
+          SizedBox(
+            width: 120,
+            height: 50,
+            child: Center(
+              child: Text(
+                '$salaireBasic FCFA',
+                style: TextStyle(
+                    fontFamily: 'normal', color: Colors.black, fontSize: 13),
+              ),
+            ),
+          ),
           Container(
+            height: 50,
+            width: 3,
+            color: Color.fromARGB(19, 0, 0, 0),
+          ),
+          SizedBox(
             width: 120,
             height: 50,
             child: Center(
@@ -378,19 +374,23 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
             width: 3,
             color: Color.fromARGB(19, 0, 0, 0),
           ),
-          Container(
-            width: 150,
-            height: 50,
-            child: Center(
-              child: Text(
-                pret,
-                style: TextStyle(
-                    fontFamily:
-                        pret == "Aucun Prêt pour l'instant" ? 'normal' : 'bold',
-                    color: pret == "Aucun Prêt pour l'instant"
-                        ? Colors.black87
-                        : Color.fromARGB(210, 255, 0, 0),
-                    fontSize: 13),textAlign: TextAlign.center,
+          Expanded(
+            child: SizedBox(
+              width: 150,
+              height: 50,
+              child: Center(
+                child: Text(
+                  pret,
+                  style: TextStyle(
+                      fontFamily: pret == "Aucun Prêt pour l'instant"
+                          ? 'normal'
+                          : 'bold',
+                      color: pret == "Aucun Prêt pour l'instant"
+                          ? Colors.black87
+                          : Color.fromARGB(210, 255, 0, 0),
+                      fontSize: 13),
+                  textAlign: TextAlign.center,
+                ),
               ),
             ),
           ),
@@ -399,24 +399,7 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
             width: 3,
             color: Color.fromARGB(19, 0, 0, 0),
           ),
-          Container(
-            width: 150,
-            height: 50,
-            child: Center(
-              child: Text(
-                avancement,
-                style: TextStyle(
-                    fontFamily: 'normal', color: Colors.black87, fontSize: 13),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-          Container(
-            height: 50,
-            width: 3,
-            color: Color.fromARGB(19, 0, 0, 0),
-          ),
-          Container(
+          SizedBox(
             width: 100,
             height: 50,
             child: Center(
@@ -433,7 +416,7 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
             width: 3,
             color: Color.fromARGB(19, 0, 0, 0),
           ),
-          Container(
+          SizedBox(
             width: 100,
             height: 50,
             child: Center(
@@ -450,12 +433,12 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
             width: 3,
             color: Color.fromARGB(19, 0, 0, 0),
           ),
-          Container(
+          SizedBox(
             width: 100,
             height: 50,
             child: Center(
               child: Text(
-                montant_a_prelever,
+                montantAPrelever,
                 style: TextStyle(
                     fontFamily: 'normal', color: Colors.black87, fontSize: 13),
                 textAlign: TextAlign.center,
@@ -466,70 +449,6 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
             height: 50,
             width: 3,
             color: Color.fromARGB(19, 0, 0, 0),
-          ),
-          Expanded(
-            child: Container(
-                width: 30,
-                height: 30,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(149, 255, 255, 255),
-                          padding: EdgeInsets.all(0)),
-                      onPressed: () {
-                        final RenderBox container = _containerKey.currentContext
-                            ?.findRenderObject() as RenderBox;
-                        final Offset containerPosition =
-                            container.localToGlobal(Offset.zero);
-                        final Size containerSize = container.size;
-                        showMenu(
-                            surfaceTintColor: Colors.white,
-                            context: context,
-                            position: RelativeRect.fromLTRB(
-                              containerPosition.dx,
-                              containerPosition.dy + containerSize.height,
-                              MediaQuery.of(context).size.width -
-                                  containerPosition.dx -
-                                  containerSize.width,
-                              0,
-                            ),
-                            items: [
-                              PopupMenuItem(
-                                onTap: () {
-                                  pretMethode(nomprenom, salaireActu,
-                                      int.parse(montantController.text));
-                                },
-                                child: Text(
-                                  'Octroyer un Prêt',
-                                  style: TextStyle(fontFamily: 'normal'),
-                                ),
-                                value: 2,
-                              ),
-                              PopupMenuItem(
-                                onTap: () {
-                                  print("okkkkkkkkk");
-                                  avancement_Methode(nomprenom, salaireActu,
-                                      int.parse(montantAvanceController.text));
-                                },
-                                child: Text(
-                                  'Faire un avanceent',
-                                  style: TextStyle(fontFamily: 'normal'),
-                                ),
-                                value: 1,
-                              ),
-                            ]);
-                      },
-                      child: Container(
-                        key: key,
-                        height: 30,
-                        width: 30,
-                        child: Image.asset("assets/images/more_icon.png"),
-                      ),
-                    )
-                  ],
-                )),
           ),
           Container(
             height: 50,
@@ -553,7 +472,7 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
             surfaceTintColor: Colors.white,
             content: Container(
               padding: EdgeInsets.all(10),
-              height: (MediaQuery.of(context).size.height / 2+20),
+              height: (MediaQuery.of(context).size.height / 2 + 20),
               width: MediaQuery.of(context).size.width / 2,
               color: Colors.white,
               child: Column(
@@ -568,7 +487,7 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
+                      SizedBox(
                         height: 45,
                         width: 300,
                         child: TextFormField(
@@ -593,7 +512,7 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
                         ),
                       ),
                       h(50),
-                      Container(
+                      SizedBox(
                         height: 45,
                         width: 300,
                         child: TextFormField(
@@ -636,7 +555,7 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
                             textAlign: TextAlign.center,
                           ),
                           h(10),
-                          Container(
+                          SizedBox(
                             height: 40,
                             width: 300,
                             child: TextFormField(
@@ -666,7 +585,7 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
                             textAlign: TextAlign.center,
                           ),
                           h(10),
-                          Container(
+                          SizedBox(
                             height: 45,
                             width: 300,
                             child: TextFormField(
@@ -697,7 +616,8 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
                     ],
                   ),
                   h(20),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -711,7 +631,7 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
                             textAlign: TextAlign.center,
                           ),
                           h(10),
-                          Container(
+                          SizedBox(
                             height: 40,
                             width: 300,
                             child: TextFormField(
@@ -742,7 +662,7 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
                             textAlign: TextAlign.center,
                           ),
                           h(10),
-                         Text(
+                          Text(
                             "Salaire Après le Prêt : 50.000FCFA",
                             style: TextStyle(
                                 fontFamily: 'normal',
@@ -764,8 +684,6 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
                           setState(
                             () {},
                           );
-
-                          Navigator.pop(context);
                         },
                         child: Container(
                           padding: EdgeInsets.all(5),
@@ -819,7 +737,7 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
+                      SizedBox(
                         height: 45,
                         width: 300,
                         child: TextFormField(
@@ -843,7 +761,7 @@ class _GestionPretAvancementState extends State<GestionPretAvancement> {
                           },
                         ),
                       ),
-                      Container(
+                      SizedBox(
                         height: 45,
                         width: 300,
                         child: TextFormField(

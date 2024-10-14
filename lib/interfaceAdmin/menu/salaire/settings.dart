@@ -20,7 +20,7 @@ class _SettingsState extends State<Settings> {
   TextEditingController montantAvanceController = TextEditingController();
   int count = 0;
 
-  DateTime _selectedDate = DateTime.now();
+  final DateTime _selectedDate = DateTime.now();
 
   bool darkMode = false;
   bool anglais = false;
@@ -29,7 +29,7 @@ class _SettingsState extends State<Settings> {
     return Container(
         padding: EdgeInsets.all(30),
         height: MediaQuery.of(context).size.height,
-        width: (MediaQuery.of(context).size.width * 13.5) / 16,
+        width: (MediaQuery.of(context).size.width * 9.7) / 12,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,7 +40,7 @@ class _SettingsState extends State<Settings> {
                     fontFamily: 'bold', fontSize: 23, color: mainColor),
               ),
               h(20),
-              Container(
+              SizedBox(
                 width: MediaQuery.of(context).size.width / 2,
                 child: Text(
                   "Gérez vos paramètres et préférences",
@@ -53,7 +53,7 @@ class _SettingsState extends State<Settings> {
               h(20),
               Divider(),
               h(20),
-              Container(
+              SizedBox(
                 width: MediaQuery.of(context).size.width / 2,
                 child: Text(
                   "Mon Profil",
@@ -296,12 +296,12 @@ class _SettingsState extends State<Settings> {
                 ],
               ),
               h(10),
-              Container(
+              SizedBox(
                 width: (MediaQuery.of(context).size.width * 9) / 16,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
+                    SizedBox(
                       width: MediaQuery.of(context).size.width / 2,
                       child: Text(
                         "Thèmes",
@@ -347,7 +347,7 @@ class _SettingsState extends State<Settings> {
                       ],
                     ),
                     h(10),
-                    Container(
+                    SizedBox(
                       width: MediaQuery.of(context).size.width / 2,
                       child: Text(
                         "Langue",

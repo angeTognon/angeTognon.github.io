@@ -1,8 +1,17 @@
-import 'package:flutter/material.dart';
+/* import 'package:flutter/material.dart';
 import 'package:flutter_screen_lock/flutter_screen_lock.dart';
 import 'package:zth_app/widgets/wid_var.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:math';
+import 'package:camera/camera.dart';
+
+late List<CameraDescription> _cameras;
+
+Future<void> initializeCameras() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  _cameras = await availableCameras();
+}
+
 class PresencesEmploye extends StatefulWidget {
   const PresencesEmploye({super.key});
 
@@ -11,12 +20,14 @@ class PresencesEmploye extends StatefulWidget {
 }
 
 class _PresencesEmployeState extends State<PresencesEmploye> {
+  late CameraController _controller;
+  late Future<void> _initializeControllerFuture;
 
-    Position? _currentPosition;
+  Position? _currentPosition;
   double targetLatitude = 9.35798;
   double targetLongitude = 2.63429;
   double radius = 10.0; // 10 mètres
-  bool dansEntreprise=false;
+  bool dansEntreprise = false;
 
   _getCurrentLocation() async {
     bool serviceEnabled;
@@ -34,15 +45,13 @@ class _PresencesEmployeState extends State<PresencesEmploye> {
     if (_isWithinRadius(position.latitude, position.longitude)) {
       print('L\'utilisateur est dans le rayon de 10 mètres');
       setState(() {
-        dansEntreprise=true;
+        dansEntreprise = true;
       });
-      
-
     } else {
       setState(() {
-        dansEntreprise=false;
+        dansEntreprise = false;
       });
-      
+
       print('L\'utilisateur est en dehors du rayon de 10 mètres');
     }
   }
@@ -61,14 +70,20 @@ class _PresencesEmployeState extends State<PresencesEmploye> {
         cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
   }
-  
-  
+
   @override
-  void initState() {
+  void initState() async {
     super.initState();
     _showAlertDialog();
+    /*   // Initialiser le contrôleur de la caméra
+    _controller = CameraController(
+      _cameras.first,
+      ResolutionPreset.medium,
+    );
+
+    _initializeControllerFuture = _controller.initialize(); */
   }
- 
+
   void _showAlertDialog() {
     Future.delayed(Duration.zero, () {
       showDialog<void>(
@@ -81,12 +96,10 @@ class _PresencesEmployeState extends State<PresencesEmploye> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: EdgeInsets.all(50),
+                  padding: EdgeInsets.all(15),
                   height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width / 2,
-                  decoration: BoxDecoration(
-                    color: mainColor__,
-                  ),
+                  width: (MediaQuery.of(context).size.width * 12) / 16,
+                  decoration: BoxDecoration(color: mainColor),
                   child: Column(
                     children: [
                       Container(
@@ -100,7 +113,7 @@ class _PresencesEmployeState extends State<PresencesEmploye> {
                       ),
                       h(30),
                       Text(
-                        "Bonjour  Ange !",
+                        "Bonjour  !",
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 30,
@@ -139,19 +152,18 @@ class _PresencesEmployeState extends State<PresencesEmploye> {
                 ),
                 Container(
                   height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width / 2,
+                  width: MediaQuery.of(context).size.width / 4,
                   child: ScreenLock(
                     useBlur: false,
-                    cancelButton: Icon(
-                      Icons.close,
-                      color: mainColor
-                    ),
+                    cancelButton: Icon(Icons.close, color: mainColor),
                     deleteButton: Icon(
                       Icons.arrow_back,
                       color: mainColor,
                     ),
                     title: Text(
-                        "Veuillez entrer votre code Secret pour\npointer votre heure de Présence ou Sortie"),
+                      "Veuillez entrer votre code Secret pour\npointer votre heure de Présence ou Sortie",
+                      style: TextStyle(fontFamily: 'normal', fontSize: 20),
+                    ),
                     onError: (value) =>
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             backgroundColor: Color.fromARGB(255, 135, 31, 23),
@@ -170,10 +182,10 @@ class _PresencesEmployeState extends State<PresencesEmploye> {
                         secretConfig: SecretConfig(
                             disabledColor: Colors.grey,
                             enabledColor: mainColor)),
-                    correctString: '1234',
+                    correctString: '4444',
                     onCancelled: () {
                       Navigator.of(context).pop();
-                        _getCurrentLocation();
+                      _getCurrentLocation();
                     },
                     onUnlocked: () {
                       Navigator.of(context).pop();
@@ -193,25 +205,73 @@ class _PresencesEmployeState extends State<PresencesEmploye> {
     return Container(
       /* dansEntreprise */
       height: MediaQuery.of(context).size.height,
-       width: (MediaQuery.of(context).size.width * 13.5) / 16,
-       padding: EdgeInsets.all(30),
-       child: Center(
-        child: Container(
-          height: 600,width: 500,child: Column(
-            children: [
-              Text("Vous n'est pas dans l'entreprise actuellement",style: TextStyle(
-                fontFamily: 'bold',fontSize: 20,color: mainColor
-              ),textAlign: TextAlign.center,),
-              h(30),
-              Image.asset("assets/images/oups.jpg"),
-              h(15),
-              Text("Vous ne pouvez pas pointer votre présence",style: TextStyle(
-                fontFamily: 'bold',fontSize: 17,color: mainColor
-              ),textAlign: TextAlign.center,),
-            ],
-          ),
-        ),
-       ),
+      width: (MediaQuery.of(context).size.width * 13.5) / 16,
+      padding: EdgeInsets.all(30),
+      child: Center(
+        child: dansEntreprise
+            ? Container(
+                height: 600,
+                width: 500,
+                child: Column(
+                  children: [
+                    Text(
+                      "Vous n'est pas dans l'entreprise actuellement",
+                      style: TextStyle(
+                          fontFamily: 'bold', fontSize: 20, color: mainColor),
+                      textAlign: TextAlign.center,
+                    ),
+                    h(30),
+                    Image.asset("assets/images/oups.jpg"),
+                    h(15),
+                    Text(
+                      "Vous ne pouvez pas pointer votre présence",
+                      style: TextStyle(
+                          fontFamily: 'bold', fontSize: 17, color: mainColor),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              )
+            : Container(
+                height: 600,
+                width: 500,
+                child: Column(
+                  children: [
+                    Text(
+                      "Vous êtes bien dans la pharmacie",
+                      style: TextStyle(
+                          fontFamily: 'bold', fontSize: 20, color: mainColor),
+                      textAlign: TextAlign.center,
+                    ),
+                    h(30),
+                    CircleAvatar(
+                      child: FutureBuilder<void>(
+                        future: _initializeControllerFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            // Si l'initialisation de la caméra est terminée, afficher le rendu
+                            return CameraPreview(_controller);
+                          } else {
+                            // Sinon, afficher un indicateur de chargement
+                            return Center(child: CircularProgressIndicator());
+                          }
+                        },
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                            onPressed: () {},
+                            child: Text("Point mon heure d'arrivée"))
+                      ],
+                    ),
+                    h(15),
+                  ],
+                ),
+              ),
+      ),
     );
   }
 }
+ */

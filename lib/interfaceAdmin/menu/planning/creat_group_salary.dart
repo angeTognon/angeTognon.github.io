@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:zth_app/main.dart';
 import 'package:zth_app/widgets/wid_var.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,12 +21,14 @@ class CreationGroupleSalarie extends StatefulWidget {
 
 class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
   // Declare a list to store the TextEditingController instances _showMultiSelectMenu()
-  List<TextEditingController> _textControllers = [];
+  final List<TextEditingController> _textControllers = [];
   List<String> selectedOptions = [];
-  List<GlobalKey> _itemsKey = [];
+  final List<GlobalKey> _itemsKey = [];
   List<String> Statuts = [];
-  List<DateTime> _selectedDate = [];
+  final List<DateTime> _selectedDate = [];
   List<bool> _selectedOptions = [];
+
+  TextEditingController nomEquipeController = TextEditingController();
 
   @override
   void initState() {
@@ -43,7 +46,7 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
       selectedOptions.add("");
     }
     for (var i = 0; i <= 0; i++) {
-      _itemWid.add(Text("data"));
+      _itemWid.add(const Text("data"));
     }
   }
 
@@ -74,7 +77,7 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
 
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController tache1 = TextEditingController();
-  bool _isSearching = false;
+  final bool _isSearching = false;
   void performSearch(String query) {
     // Ici, vous pouvez implémenter la logique de recherche en fonction de votre application
     print("Recherche pour : $query");
@@ -85,15 +88,15 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
   final GlobalKey _containerKey4 = GlobalKey();
   final GlobalKey _containerKey_add_statut = GlobalKey();
 
-  double _containerWidth = 200.0;
-  double _cursorX = 0.0;
-  bool _isResizing = false;
+  final double _containerWidth = 200.0;
+  final double _cursorX = 0.0;
+  final bool _isResizing = false;
 
-  List<String> _items = [];
-  List<Widget> _itemWid = [];
+  final List<String> _items = [];
+  final List<Widget> _itemWid = [];
   String nomPrenomSalarie = "";
-  List<String> _options = [];
-  int _currentIndex = 0;
+  final List<String> _options = [];
+  final int _currentIndex = 0;
   getSalary() async {
     var url = "https://zoutechhub.com/pharmaRh/getSalaryNomPrenom.php";
     var response = await http.get(Uri.parse(url));
@@ -101,7 +104,7 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
     return pub;
   }
 
-  List<List<String>> _selectedOptionsPerIndex = [];
+  final List<List<String>> _selectedOptionsPerIndex = [];
   void updateSelectedOptions(int index) {
     if (index < _selectedOptionsPerIndex.length &&
         _selectedOptionsPerIndex.isNotEmpty) {
@@ -123,8 +126,8 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
     }
   }
 
-  List<String> _selectedPersonnes = [];
-    List<String> _idPersonnes = [];
+  final List<String> _selectedPersonnes = [];
+  final List<String> _idPersonnes = [];
 
   bool isOK = false;
 
@@ -148,19 +151,19 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
         return StatefulBuilder(
           builder: (context, setState) => AlertDialog(
             surfaceTintColor: Colors.white,
-            title: Text(
+            title: const Text(
               'Choisissez les personnes à qui\nvous souhaitez attribuer ces tâches',
               style: TextStyle(fontFamily: 'normal', fontSize: 15),
               textAlign: TextAlign.center,
             ),
-            content: Container(
+            content: SizedBox(
               height: MediaQuery.of(context).size.height / 2.5,
               width: 300,
               child: FutureBuilder(
                 future: getSalary(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.hasError) {
-                    return Center(
+                    return const Center(
                       child: Text(
                           "Erreur de chargement. Veuillez relancer l'application"),
                     );
@@ -177,8 +180,9 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                               ),
                               h(20),
                               Container(
-                                margin: EdgeInsets.only(left: 20, right: 20),
-                                child: Text(
+                                margin:
+                                    const EdgeInsets.only(left: 20, right: 20),
+                                child: const Text(
                                   "Oups, Vous n'avez aucun employé pour l'instant ",
                                   style: TextStyle(fontSize: 17),
                                   textAlign: TextAlign.center,
@@ -193,7 +197,7 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                               return CheckboxListTile(
                                 title: Row(
                                   children: [
-                                    CircleAvatar(
+                                    const CircleAvatar(
                                       child: Center(
                                         child: Icon(Icons.person),
                                       ),
@@ -208,12 +212,16 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                                   setState(() {
                                     /* _idPersonnes */
                                     _selectedOptions[index] = value!;
-                                    if (value!) {
-                                      _selectedPersonnes.add("${snapshot.data[index]['prenom']} ${snapshot.data[index]['nom']}");
-                                      _idPersonnes.add("${snapshot.data[index]['id']}");
+                                    if (value) {
+                                      _selectedPersonnes.add(
+                                          "${snapshot.data[index]['prenom']} ${snapshot.data[index]['nom']}");
+                                      _idPersonnes
+                                          .add("${snapshot.data[index]['id']}");
                                     } else {
-                                      _selectedPersonnes.remove("${snapshot.data[index]['prenom']} ${snapshot.data[index]['nom']}");
-                                      _idPersonnes.remove("${snapshot.data[index]['id']}");
+                                      _selectedPersonnes.remove(
+                                          "${snapshot.data[index]['prenom']} ${snapshot.data[index]['nom']}");
+                                      _idPersonnes.remove(
+                                          "${snapshot.data[index]['id']}");
                                     }
                                   });
                                 },
@@ -222,7 +230,7 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                           );
                   }
                   return Center(
-                    child: Container(
+                    child: SizedBox(
                       height: 150,
                       width: 150,
                       child: Lottie.asset("assets/images/anim.json"),
@@ -236,7 +244,7 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -247,7 +255,7 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                     Navigator.pop(context);
                   });
                 },
-                child: Text('Save'),
+                child: const Text('Save'),
               ),
             ],
           ),
@@ -258,21 +266,21 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
 
   String Statut = "Pas Commencé";
   bool show = false;
-  String _chars =
+  final String _chars =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-  Random _rnd = Random();
+  final Random _rnd = Random();
   String codeCommande = "";
   String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
       length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
-  inscription(String id_employe,nomPrenom, dateTravail, typeActivite,
+  inscription(String id_employe, nomPrenom, dateTravail, typeActivite,
       codeEquipe) async {
     setState(() {
       show = true;
     });
     // EncryptData(mpController.text);
     var url =
-        "https://zoutechhub.com/pharmaRh/creatEquipe.php?id_employe=$id_employe&nomPrenom=$nomPrenom&dateTravail=$dateTravail&typeActivite=$typeActivite&codeEquipe=$codeEquipe";
+        "https://zoutechhub.com/pharmaRh/creatEquipe.php?id_employe=$id_employe&nomPrenom=$nomPrenom&dateTravail=$dateTravail&typeActivite=$typeActivite&codeEquipe=$codeEquipe&nomEquipe=${nomEquipeController.text}";
     var response = await http.post(Uri.parse(url));
     print(response.body);
     print(response.statusCode);
@@ -280,7 +288,7 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
       setState(() {
         show = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Color.fromARGB(255, 18, 133, 22),
           content: Text(
             "Création Réussie.",
@@ -293,7 +301,7 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
     } else {
       setState(() {
         show = false;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             backgroundColor: Colors.redAccent,
             content: Text(
               "Erreur. Veuillez réessayer ",
@@ -305,8 +313,6 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
       });
     }
   }
-
-  
 
   DateTime _selectedDate0 = DateTime.now();
   String formattedDate1 = "";
@@ -322,30 +328,30 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
               builder: (context) {
                 return StatefulBuilder(
                   builder: (context, setState) => AlertDialog(
-                    surfaceTintColor: Colors.white,
+                    backgroundColor: Colors.white,
                     title: Text(
-                      "Création d'un groupe d'employé",
+                      "Ajouter une équipe de Garde/Permanence",
                       style: TextStyle(
                           fontFamily: 'bold', fontSize: 18, color: mainColor),
                       textAlign: TextAlign.center,
                     ),
-                    content: Container(
-                      height: MediaQuery.of(context).size.height / 1.8,
+                    content: SizedBox(
+                      height: MediaQuery.of(context).size.height / 1.6,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Divider(),
+                          const Divider(),
                           h(20),
-                          Text(
-                            "1- Veuillez choisir les membres de l'équipe",
+                          const Text(
+                            "1- Veuillez choisir les membres de l'équipe de Garde/Permanence",
                             style: TextStyle(
                               fontFamily: 'bold',
                               fontSize: 15,
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          h(20),
-                          Container(
+                          h(10),
+                          SizedBox(
                             height: 220,
                             width: MediaQuery.of(context).size.width / 2,
                             child: FutureBuilder(
@@ -353,7 +359,7 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                               builder: (BuildContext context,
                                   AsyncSnapshot snapshot) {
                                 if (snapshot.hasError) {
-                                  return Center(
+                                  return const Center(
                                     child: Text(
                                         "Erreur de chargement. Veuillez relancer l'application"),
                                   );
@@ -370,9 +376,9 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                                             ),
                                             h(20),
                                             Container(
-                                              margin: EdgeInsets.only(
+                                              margin: const EdgeInsets.only(
                                                   left: 20, right: 20),
-                                              child: Text(
+                                              child: const Text(
                                                 "Oups, Vous n'avez aucun employé pour l'instant ",
                                                 style: TextStyle(fontSize: 17),
                                                 textAlign: TextAlign.center,
@@ -380,43 +386,85 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                                             ),
                                           ],
                                         )
-                                      : ListView.builder(
-                                          itemCount: snapshot.data.length,
-                                          itemBuilder: (context, index) {
-                                            updateSelectedOptions(index);
-                                            return CheckboxListTile(
-                                              title: Row(
-                                                children: [
-                                                  CircleAvatar(
-                                                    child: Center(
-                                                      child: Icon(Icons.person),
+                                      : Wrap(
+                                          spacing:
+                                              10.0, // Espace horizontal entre les éléments
+                                          runSpacing:
+                                              10.0, // Espace vertical entre les lignes
+                                          children: List.generate(
+                                            snapshot.data.length,
+                                            (index) {
+                                              return Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          200),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.grey
+                                                          .withOpacity(0.2),
+                                                      spreadRadius: 2,
+                                                      blurRadius: 5,
+                                                      offset: const Offset(
+                                                          0, 3), // Ombre en bas
                                                     ),
+                                                  ],
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.all(0),
+                                                height: 50,
+                                                width: 240,
+                                                child: CheckboxListTile(
+                                                  dense: true,
+                                                  activeColor: mainColor,
+                                                  title: Row(
+                                                    children: [
+                                                      const CircleAvatar(
+                                                        child:
+                                                            Icon(Icons.person),
+                                                      ),
+                                                      const SizedBox(
+                                                          width:
+                                                              20), // Espacement entre l'avatar et le texte
+                                                      Expanded(
+                                                        child: Text(
+                                                          "${snapshot.data[index]['prenom']} ${snapshot.data[index]['nom']}",
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: const TextStyle(
+                                                              fontFamily:
+                                                                  'normal'), // Gère le débordement si le texte est trop long
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                  w(20),
-                                                  Text(
-                                                      "${snapshot.data[index]['prenom']} ${snapshot.data[index]['nom']}"),
-                                                ],
-                                              ),
-                                              value: _selectedOptions[index],
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  _selectedOptions[index] =
-                                                      value!;
-                                                  if (value!) {
-                                                    _idPersonnes.add("${snapshot.data[index]['id']}");
-                                                    _selectedPersonnes.add("${snapshot.data[index]['prenom']} ${snapshot.data[index]['nom']}");
-                                                  } else {
-                                                    _idPersonnes.remove("${snapshot.data[index]['id']}");
-                                                    _selectedPersonnes.remove("${snapshot.data[index]['prenom']} ${snapshot.data[index]['nom']}");
-                                                  }
-                                                });
-                                              },
-                                            );
-                                          },
-                                        );
+                                                  value:
+                                                      _selectedOptions[index],
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      _selectedOptions[index] =
+                                                          value!;
+                                                      if (value) {
+                                                        _idPersonnes.add(
+                                                            "${snapshot.data[index]['id']}");
+                                                        _selectedPersonnes.add(
+                                                            "${snapshot.data[index]['prenom']} ${snapshot.data[index]['nom']}");
+                                                      } else {
+                                                        _idPersonnes.remove(
+                                                            "${snapshot.data[index]['id']}");
+                                                        _selectedPersonnes.remove(
+                                                            "${snapshot.data[index]['prenom']} ${snapshot.data[index]['nom']}");
+                                                      }
+                                                    });
+                                                  },
+                                                ),
+                                              );
+                                            },
+                                          ));
                                 }
                                 return Center(
-                                  child: Container(
+                                  child: SizedBox(
                                     height: 150,
                                     width: 150,
                                     child:
@@ -431,69 +479,10 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    "2- Date de Permanence / Garde : ",
-                                    style: TextStyle(
-                                      fontFamily: 'bold',
-                                      fontSize: 15,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  h(20),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(color: mainColor)),
-                                    height: 45,
-                                    width: 300,
-                                    padding: EdgeInsets.only(left: 10, top: 3),
-                                    child: TextFormField(
-                                      onTap: () {
-                                        showDatePicker(
-                                          
-                                          context: context,
-                                          initialDate:
-                                              _selectedDate0 ?? DateTime.now(),
-                                          firstDate: DateTime(1900),
-                                          lastDate: DateTime(2100),
-                                        ).then((pickedDate) {
-                                          if (pickedDate != null) {
-                                            setState(() {
-                                              _selectedDate0 = pickedDate;
-                                              formattedDate1 =
-                                                  "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year.toString()}";
-                                              print(formattedDate1);
-                                            });
-                                          }
-                                        });
-                                      },
-                                      decoration: InputDecoration(
-                                        labelStyle: TextStyle(
-                                            fontFamily: 'normal',
-                                            fontSize: 14,
-                                            color: Colors.black45),
-                                        border: InputBorder.none,
-                                        suffixIcon: IconButton(
-                                          icon: Icon(Icons.calendar_today),
-                                          onPressed: () {},
-                                        ),
-                                      ),
-                                      readOnly: true,
-                                      style: TextStyle(
-                                          fontFamily: "normal", fontSize: 14),
-                                      controller: TextEditingController(
-                                          text: formattedDate1 != ""
-                                              ? formattedDate1
-                                              : "Cliquez ici pour choisir"),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                    "3- Type d'activité ",
+                                  const Text(
+                                    "2- Type d'activité ",
                                     style: TextStyle(
                                       fontFamily: 'bold',
                                       fontSize: 15,
@@ -535,26 +524,26 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                                                 setState(() => typeActivite =
                                                     "Permanence");
                                               },
+                                              value: 2,
                                               child: Text(
                                                 "Permanence",
                                                 style: TextStyle(
                                                     fontFamily: 'normal',
                                                     fontSize: 13),
                                               ),
-                                              value: 2,
                                             ),
                                             PopupMenuItem(
                                               onTap: () {
                                                 setState(() =>
                                                     typeActivite = "Garde");
                                               },
+                                              value: 2,
                                               child: Text(
                                                 'Garde',
                                                 style: TextStyle(
                                                     fontFamily: 'normal',
                                                     fontSize: 13),
                                               ),
-                                              value: 2,
                                             ),
                                           ],
 
@@ -563,7 +552,7 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                                         );
                                       },
                                       child: Container(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                             left: 5,
                                             right: 5,
                                             top: 5,
@@ -579,14 +568,14 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                                               typeActivite == ""
                                                   ? "Choisir un type d'activité"
                                                   : typeActivite,
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   fontFamily: "normal",
                                                   fontSize: 14),
                                             ),
-                                            Icon(
+                                            const Icon(
                                               Icons.arrow_drop_down_rounded,
-                                              color: const Color.fromARGB(
-                                                  154, 0, 0, 0),
+                                              color:
+                                                  Color.fromARGB(154, 0, 0, 0),
                                             )
                                           ],
                                         ),
@@ -594,6 +583,103 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                                     ),
                                   ),
                                 ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "3- Date de Permanence / Garde : ",
+                                    style: TextStyle(
+                                      fontFamily: 'bold',
+                                      fontSize: 15,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  h(20),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(color: mainColor)),
+                                    height: 45,
+                                    width: 300,
+                                    padding:
+                                        const EdgeInsets.only(left: 10, top: 3),
+                                    child: TextFormField(
+                                      onTap: () {
+                                        showDatePicker(
+                                          context: context,
+                                          initialDate:
+                                              _selectedDate0 ?? DateTime.now(),
+                                          firstDate: DateTime(1900),
+                                          lastDate: DateTime(2100),
+                                        ).then((pickedDate) {
+                                          if (pickedDate != null) {
+                                            setState(() {
+                                              _selectedDate0 = pickedDate;
+                                              formattedDate1 =
+                                                  "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year.toString()}";
+                                              print(formattedDate1);
+                                            });
+                                          }
+                                        });
+                                      },
+                                      decoration: InputDecoration(
+                                        labelStyle: const TextStyle(
+                                            fontFamily: 'normal',
+                                            fontSize: 14,
+                                            color: Colors.black45),
+                                        border: InputBorder.none,
+                                        suffixIcon: IconButton(
+                                          icon:
+                                              const Icon(Icons.calendar_today),
+                                          onPressed: () {},
+                                        ),
+                                      ),
+                                      readOnly: true,
+                                      style: const TextStyle(
+                                          fontFamily: "normal", fontSize: 14),
+                                      controller: TextEditingController(
+                                          text: formattedDate1 != ""
+                                              ? formattedDate1
+                                              : "Cliquez ici pour choisir"),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          h(20),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "4- Nom de l'équipe ",
+                                style: TextStyle(
+                                  fontFamily: 'bold',
+                                  fontSize: 15,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              h(15),
+                              SizedBox(
+                                height: 45,
+                                width: MediaQuery.of(context).size.width / 2,
+                                child: TextFormField(
+                                  style: const TextStyle(
+                                      fontFamily: 'bold',
+                                      color: Colors.black45,
+                                      fontSize: 14),
+                                  controller: nomEquipeController,
+                                  enabled: true,
+                                  decoration: InputDecoration(
+                                    labelStyle: TextStyle(
+                                        fontFamily: 'bold',
+                                        fontSize: 14,
+                                        color: mainColor),
+                                    border: const OutlineInputBorder(),
+                                    labelText: "Cliquez ici ",
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -605,18 +691,20 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text('Annuler'),
+                        child: const Text('Annuler'),
                       ),
                       show
-                          ? CircularProgressIndicator()
+                          ? const CircularProgressIndicator()
                           : ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: mainColor),
                               onPressed: () {
                                 codeCommande = getRandomString(10);
-                                for (int i = 0; i < _selectedPersonnes.length;i++) {
+                                for (int i = 0;
+                                    i < _selectedPersonnes.length;
+                                    i++) {
                                   print(i);
-                                  setState((){
+                                  setState(() {
                                     inscription(
                                         _idPersonnes[i],
                                         _selectedPersonnes[i],
@@ -624,11 +712,10 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
                                         typeActivite,
                                         codeCommande);
                                   });
-                                 
                                 }
                                 Navigator.of(context).pop();
                               },
-                              child: Text(
+                              child: const Text(
                                 "Créer",
                                 style: TextStyle(
                                     color: Colors.white, fontFamily: 'bold'),
@@ -640,13 +727,12 @@ class _CreationGroupleSalarieState extends State<CreationGroupleSalarie> {
             );
           },
           child: Container(
-            padding: EdgeInsets.only(left: 5, right: 5),
-            height: 25,
+            padding: const EdgeInsets.all(7),
             decoration: BoxDecoration(
-                color: mainColor, borderRadius: BorderRadius.circular(7)),
-            child: Center(
+                color: mainColor2, borderRadius: BorderRadius.circular(7)),
+            child: const Center(
               child: Text(
-                "Ajouter un groupe de Salarié",
+                "Ajouter une équipe",
                 style: TextStyle(color: Colors.white, fontFamily: 'normal'),
               ),
             ),

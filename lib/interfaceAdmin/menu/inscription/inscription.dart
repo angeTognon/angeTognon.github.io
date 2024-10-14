@@ -12,7 +12,6 @@ class Inscription extends StatefulWidget {
 }
 
 class _InscriptionState extends State<Inscription> {
-
   final _formKey = GlobalKey<FormState>();
   final nomPrenomController = TextEditingController();
   final emailController = TextEditingController();
@@ -31,7 +30,8 @@ class _InscriptionState extends State<Inscription> {
       show = true;
     });
     // EncryptData(mpController.text);
-    var url = "https://zoutechhub.com/pharmaRh/inscription.php?nomPrenom=${nomPrenomController.text}&email=${emailController.text}&tel=${numController.text}&ville=${villeController.text}&mp=${passwordController.text}&typeCompte=admin&photo=d";
+    var url =
+        "https://zoutechhub.com/pharmaRh/inscription.php?nomPrenom=${nomPrenomController.text}&email=${emailController.text}&tel=${numController.text}&ville=${villeController.text}&mp=${passwordController.text}&typeCompte=admin&photo=d";
     var response = await http.post(Uri.parse(url));
     //print('Response status: ${response.statusCode}');
     //print('Response body: ${response.body}');
@@ -39,23 +39,25 @@ class _InscriptionState extends State<Inscription> {
       setState(() {
         show = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Color.fromARGB(255, 18, 133, 22),
           content: Text(
             "Inscription Réussie. Veuillez vous connecter maintenant",
             style: TextStyle(
-                fontFamily: 'normal', color: Colors.white, fontWeight: FontWeight.bold),
+                fontFamily: 'normal',
+                color: Colors.white,
+                fontWeight: FontWeight.bold),
           )));
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => Login(),
+            builder: (context) => const Login(),
           ),
           (route) => false);
     } else {
       setState(() {
         show = false;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             backgroundColor: Colors.redAccent,
             content: Text(
               "Erreur : Il semble que cette adresse mail a déjà été utilisée ",
@@ -83,12 +85,12 @@ class _InscriptionState extends State<Inscription> {
                 Container(
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width / 2,
-                  padding: EdgeInsets.all(50),
+                  padding: const EdgeInsets.all(50),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       h(130),
-                      Text(
+                      const Text(
                         "PharmaRH",
                         style: TextStyle(
                             color: Color.fromARGB(255, 38, 205, 0),
@@ -96,7 +98,7 @@ class _InscriptionState extends State<Inscription> {
                             fontSize: 60),
                       ),
                       h(20),
-                      Text(
+                      const Text(
                         "Gérez votre équipe avec soin,\ncomme vos médicaments.",
                         style: TextStyle(
                             color: Colors.white,
@@ -104,9 +106,9 @@ class _InscriptionState extends State<Inscription> {
                             fontSize: 25),
                       ),
                       h(50),
-                      Container(
+                      SizedBox(
                           width: MediaQuery.of(context).size.width / 2.2,
-                          child: Text(
+                          child: const Text(
                             "Pharma HR est la solution de gestion des ressources humaines conçue sur-mesure pour les pharmacies. Gérez efficacement les fiches de paie, les congés, les formations et bien plus encore, le tout dans une interface intuitive. Restez concentré sur vos patients, laissez Pharma HR s'occuper de vos employés",
                             style: TextStyle(
                                 color: Colors.white,
@@ -118,23 +120,27 @@ class _InscriptionState extends State<Inscription> {
                   // child : Image.asset("assets/images/login.jpg")
                 ),
                 Container(
-                  padding: EdgeInsets.only(left: 40,right: 40,bottom: 10,top: 10),
-                  decoration: BoxDecoration(color: Colors.white,
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(40),bottomLeft: Radius.circular(40))
-                  ),
+                  padding: const EdgeInsets.only(
+                      left: 40, right: 40, bottom: 10, top: 10),
+                  decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(40),
+                          bottomLeft: Radius.circular(40))),
                   height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width/2,
+                  width: MediaQuery.of(context).size.width / 2,
                   child: Form(
                     key: _formKey,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Container( 
-                          height: 200,width: 200,
+                        SizedBox(
+                            height: 200,
+                            width: 200,
                             child: Lottie.asset("assets/images/doc.json")),
                         Container(
-                          child: Text(
+                          child: const Text(
                             "Création d'un compte",
                             style: TextStyle(
                               fontSize: 17,
@@ -143,19 +149,18 @@ class _InscriptionState extends State<Inscription> {
                             textAlign: TextAlign.center,
                           ),
                         ),
-                       
-                        SizedBox(height: 10.0),
+                        const SizedBox(height: 10.0),
                         Container(
                           child: TextFormField(
                             controller: nomPrenomController,
                             decoration: InputDecoration(
                               labelText: 'Nom et Prénom',
-                              contentPadding: EdgeInsets.symmetric(
+                              contentPadding: const EdgeInsets.symmetric(
                                   vertical: 12.0, horizontal: 16.0),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12.0),
                               ),
-                              labelStyle: TextStyle(
+                              labelStyle: const TextStyle(
                                   fontSize: 13,
                                   fontFamily: 'bold',
                                   color: Color(0xCD000000)),
@@ -168,12 +173,12 @@ class _InscriptionState extends State<Inscription> {
                             controller: emailController,
                             decoration: InputDecoration(
                               labelText: 'Email',
-                              contentPadding: EdgeInsets.symmetric(
+                              contentPadding: const EdgeInsets.symmetric(
                                   vertical: 12.0, horizontal: 16.0),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12.0),
                               ),
-                              labelStyle: TextStyle(
+                              labelStyle: const TextStyle(
                                   fontSize: 13,
                                   fontFamily: 'bold',
                                   color: Color(0xCD000000)),
@@ -186,12 +191,12 @@ class _InscriptionState extends State<Inscription> {
                             controller: numController,
                             decoration: InputDecoration(
                               labelText: 'Numéro de Téléphone',
-                              contentPadding: EdgeInsets.symmetric(
+                              contentPadding: const EdgeInsets.symmetric(
                                   vertical: 12.0, horizontal: 16.0),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12.0),
                               ),
-                              labelStyle: TextStyle(
+                              labelStyle: const TextStyle(
                                   fontSize: 13,
                                   fontFamily: 'bold',
                                   color: Color(0xCD000000)),
@@ -204,12 +209,12 @@ class _InscriptionState extends State<Inscription> {
                             controller: villeController,
                             decoration: InputDecoration(
                               labelText: 'Ville',
-                              contentPadding: EdgeInsets.symmetric(
+                              contentPadding: const EdgeInsets.symmetric(
                                   vertical: 12.0, horizontal: 16.0),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12.0),
                               ),
-                              labelStyle: TextStyle(
+                              labelStyle: const TextStyle(
                                   fontSize: 13,
                                   fontFamily: 'bold',
                                   color: Color(0xCD000000)),
@@ -222,12 +227,12 @@ class _InscriptionState extends State<Inscription> {
                           obscureText: !_isPasswordVisible,
                           decoration: InputDecoration(
                             labelText: 'Mot de passe',
-                            contentPadding: EdgeInsets.symmetric(
+                            contentPadding: const EdgeInsets.symmetric(
                                 vertical: 12.0, horizontal: 16.0),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.0),
                             ),
-                            labelStyle: TextStyle(
+                            labelStyle: const TextStyle(
                                 fontSize: 13,
                                 fontFamily: 'bold',
                                 color: Color(0xCD000000)),
@@ -236,8 +241,9 @@ class _InscriptionState extends State<Inscription> {
                                 _isPasswordVisible
                                     ? Icons.visibility
                                     : Icons.visibility_off,
-                                color:
-                                    _isPasswordVisible ? Colors.blue : Colors.grey,
+                                color: _isPasswordVisible
+                                    ? Colors.blue
+                                    : Colors.grey,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -253,18 +259,18 @@ class _InscriptionState extends State<Inscription> {
                             return null;
                           },
                         ),
-                        SizedBox(height: 16.0),
+                        const SizedBox(height: 16.0),
                         TextFormField(
                           controller: passwordController2,
                           obscureText: !_isPasswordVisible2,
                           decoration: InputDecoration(
                             labelText: 'Confirmez à nouveau Votre Mot de passe',
-                            contentPadding: EdgeInsets.symmetric(
+                            contentPadding: const EdgeInsets.symmetric(
                                 vertical: 12.0, horizontal: 16.0),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.0),
                             ),
-                            labelStyle: TextStyle(
+                            labelStyle: const TextStyle(
                                 fontSize: 13,
                                 fontFamily: 'bold',
                                 color: Color(0xCD000000)),
@@ -273,8 +279,9 @@ class _InscriptionState extends State<Inscription> {
                                 _isPasswordVisible2
                                     ? Icons.visibility
                                     : Icons.visibility_off,
-                                color:
-                                    _isPasswordVisible2 ? Colors.blue : Colors.grey,
+                                color: _isPasswordVisible2
+                                    ? Colors.blue
+                                    : Colors.grey,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -290,31 +297,50 @@ class _InscriptionState extends State<Inscription> {
                             return null;
                           },
                         ),
-                        SizedBox(height: 10.0),
+                        const SizedBox(height: 10.0),
                         show
                             ? Center(
-                                child: Container(
+                                child: SizedBox(
                                     height: 60,
                                     width: 60,
-                                    child: CircularProgressIndicator()))
+                                    child: const CircularProgressIndicator()))
                             : Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
                                 child: MouseRegion(
                                   cursor: SystemMouseCursors.click,
                                   child: ElevatedButton(
                                     onPressed: () {
-                                       if (nomPrenomController.text.isEmpty || emailController.text.isEmpty || numController.text.isEmpty || villeController.text.isEmpty || passwordController.text.isEmpty || passwordController2.text.isEmpty) {
-                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                          backgroundColor: const Color.fromARGB(255, 135, 28, 20),
-                                          content: Text("Veuillez remplir tous les champs",style: TextStyle(fontFamily: 'normal'),)));
+                                      if (nomPrenomController.text.isEmpty ||
+                                          emailController.text.isEmpty ||
+                                          numController.text.isEmpty ||
+                                          villeController.text.isEmpty ||
+                                          passwordController.text.isEmpty ||
+                                          passwordController2.text.isEmpty) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                                backgroundColor: Color.fromARGB(
+                                                    255, 135, 28, 20),
+                                                content: Text(
+                                                  "Veuillez remplir tous les champs",
+                                                  style: TextStyle(
+                                                      fontFamily: 'normal'),
+                                                )));
                                         //login();
-                                      }else{
+                                      } else {
                                         inscription();
                                       }
                                     },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: mainColor,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                      ),
+                                    ),
                                     child: Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 12.0),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 12.0),
                                       child: Text(
                                         "S'inscrire",
                                         style: TextStyle(
@@ -323,21 +349,17 @@ class _InscriptionState extends State<Inscription> {
                                             color: Colors.white),
                                       ),
                                     ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: mainColor,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12.0),
-                                      ),
-                                    ),
                                   ),
                                 ),
                               ),
-                        SizedBox(height: 16.0),
+                        const SizedBox(height: 16.0),
                         TextButton(
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => Login(),));
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const Login(),
+                            ));
                           },
-                          child: Text(
+                          child: const Text(
                             "Vous avez déjà un compte ? Connectez-vous",
                             style: TextStyle(
                                 fontFamily: 'regular',

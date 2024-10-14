@@ -59,6 +59,11 @@ dependencies:
   http:
   flutter_phoenix:
   url_launcher: 
+  http_parser:
+  chatview:
+  permission_handler: ^10.0.0
+  camera_web: 
+  flutter_webrtc: 
 
 dev_dependencies:
   flutter_test:
